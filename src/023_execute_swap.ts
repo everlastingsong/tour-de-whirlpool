@@ -3,7 +3,7 @@ import { Provider } from "@project-serum/anchor";
 import { DecimalUtil, Percentage } from "@orca-so/common-sdk";
 import {
   WhirlpoolContext, AccountFetcher, buildWhirlpoolClient, ORCA_WHIRLPOOL_PROGRAM_ID,
-  PDAUtil, PoolUtil, swapQuoteWithParams
+  PDAUtil, swapQuoteByInputToken
 } from "@orca-so/whirlpools-sdk";
 import Decimal from "decimal.js";
 
@@ -45,35 +45,18 @@ async function main() {
   // 1 devUSDC トークンを devSAMO にスワップします
   const amount_in = new Decimal("1" /* devUSDC */);
 
-  // 1個目のトークンを a、2個目のトークンを b としているため a_to_b = true は devSAMO >> devUSDC 方向のスワップ
-  // devSAMO << devUSDC 方向のため false にする
-  const a_to_b = false;
-
-  // スワップをシミュレーションするために必要なアカウントを取得
-  const whirlpool_data = await whirlpool.getData();
-  const tick_array_address = PoolUtil.getTickArrayPublicKeysForSwap(
-      whirlpool_data.tickCurrentIndex,
-      whirlpool_data.tickSpacing,
-      a_to_b,
-      ctx.program.programId,
-      whirlpool_pubkey
-  );
-  const tick_array_sequence_data = await fetcher.listTickArrays(tick_array_address, true);
-
   // スワップの見積もり取得(シミュレーション実行)
-  const quote = swapQuoteWithParams({
-    // スワップの方向
-    aToB: a_to_b,
+  const quote = await swapQuoteByInputToken(
+    whirlpool,
     // 入力するトークン
-    amountSpecifiedIsInput: true,
-    tokenAmount: DecimalUtil.toU64(amount_in, devUSDC.decimals),
+    devUSDC.mint,
+    DecimalUtil.toU64(amount_in, devUSDC.decimals),
     // 許容するスリッページ (10/1000 = 1%)
-    slippageTolerance: Percentage.fromFraction(10, 1000),
-    // シミュレーションに使うデータやアカウント
-    whirlpoolData: whirlpool_data,
-    tickArrayAddresses: tick_array_address,
-    tickArrays: tick_array_sequence_data,
-  });
+    Percentage.fromFraction(10, 1000),
+    ctx.program.programId,
+    fetcher,
+    true
+  );
 
   // 見積もり結果表示
   console.log("estimatedAmountIn:", DecimalUtil.fromU64(quote.estimatedAmountIn, devUSDC.decimals).toString(), "devUSDC");
