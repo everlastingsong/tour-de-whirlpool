@@ -41,12 +41,16 @@ async function main() {
   console.log("getTokenAccountsByOwner:", accounts);
 
   // トークンアカウントのデータをデコード
-  accounts.value.map((value) => {
+  for (let i=0; i<accounts.value.length; i++) {
+    const value = accounts.value[i];
+
     // デコード
     const parsed_token_account = TokenUtil.deserializeTokenAccount(value.account.data);
     // mint アドレスからどのトークンのトークンアカウントか特定
     const mint = parsed_token_account.mint;
     const token_def = token_defs[mint.toBase58()];
+    // devToken 以外は無視
+    if ( token_def === undefined ) continue;
 
     // 残高は amount
     const amount = parsed_token_account.amount;
@@ -60,7 +64,7 @@ async function main() {
       "\n  amount:", amount.toString(),
       "\n  ui_amount:", ui_amount.toString()
     );    
-  });
+  }
 }
 
 main();
