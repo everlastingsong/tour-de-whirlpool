@@ -17,7 +17,7 @@ do
             filter="$filter//LANG:$l"
         fi
     done
-    echo "  egrep filter: $filter"
+    echo "  grep filter: $filter"
 
     # make sed command
     command="s/LANG:${lang}//"
