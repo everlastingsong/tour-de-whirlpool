@@ -7,7 +7,6 @@ const COMMITMENT = 'confirmed';
 async function main() {
   //LANG:JP Devnet の RPC への要求用のコネクションを作成
   //LANG:EN Create a connection for sending RPC requests to Devnet
-  //LANG:FR Create a connection for sending RPC requests to Devnet
   const connection = new Connection(RPC_ENDPOINT_URL, COMMITMENT);
 
   //LANG:JP wallet.json から秘密鍵を読み込み (秘密鍵と公開鍵のペアは Keypair クラスで管理する)
@@ -18,7 +17,7 @@ async function main() {
   //LANG:JP 公開鍵を表示する場合は Base58 形式の文字列で表示する
   //LANG:EN Display the RPC and the wallet's public key
   //LANG:EN When displaying the public key, use base58 encoding
-  console.log("endpoint:", connection.rpcEndpoint);
+  console.log("endpoint", connection.rpcEndpoint);
   console.log("wallet pubkey:", keypair.publicKey.toBase58());
 
   //LANG:JP SOL 残高取得
