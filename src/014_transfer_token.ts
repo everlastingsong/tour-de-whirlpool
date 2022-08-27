@@ -7,7 +7,8 @@ const RPC_ENDPOINT_URL = "https://api.devnet.solana.com";
 const COMMITMENT = 'confirmed';
 
 async function main() {
-  // RPC へのコネクション作成、秘密鍵読み込み
+  //LANG:JP RPC へのコネクション作成、秘密鍵読み込み
+  //LANG:EN Initialize a connection to the RPC and read in private key
   const connection = new Connection(RPC_ENDPOINT_URL, COMMITMENT);
   const keypair = Keypair.fromSecretKey(new Uint8Array(secret));
   console.log("endpoint:", connection.rpcEndpoint);
@@ -18,16 +19,20 @@ async function main() {
   const DEV_SAMO_MINT = new PublicKey("Jd4M8bfJG3sAkd82RsGWyEXoaBXQP7njFzBwEaCTuDa");
   const DEV_SAMO_DECIMALS = 9;
 
-  // devSAMOの送信先のウォレット
+  //LANG:JP devSAMOの送信先のウォレット
+  //LANG:EN Destination wallet for the devSAMO
   const dest_pubkey = new PublicKey("vQW71yo6X1FjTwt9gaWtHYeoGMu7W9ehSmNiib7oW5G");
 
-  // 送る量
+  //LANG:JP 送る量
+  //LANG:EN Amount to send
   const amount = 1_000_000_000; // 1 devSAMO
 
-  // 送信元のトークンアカウント取得
+  //LANG:JP 送信元のトークンアカウント取得
+  //LANG:EN Obtain the associated token account from the source wallet
   const src_token_account = await deriveATA(keypair.publicKey, DEV_SAMO_MINT);
 
-  // 送信先のトークンアカウント取得 (トークンアカウントが存在しない場合は create_ata_ix に作成用の命令が入る)
+  //LANG:JP 送信先のトークンアカウント取得 (トークンアカウントが存在しない場合は create_ata_ix に作成用の命令が入る)
+  //LANG:EN Obtain the associated token account for the destination wallet.
   const {address: dest_token_account, ...create_ata_ix} = await resolveOrCreateATA(
     connection,
     dest_pubkey,
@@ -37,7 +42,8 @@ async function main() {
     keypair.publicKey
   );
 
-  // devSAMOを送る命令を作成
+  //LANG:JP devSAMOを送る命令を作成
+  //LANG:EN Create the instruction to send devSAMO
   const transfer_ix = Token.createTransferCheckedInstruction(
     TOKEN_PROGRAM_ID,
     src_token_account,
@@ -49,19 +55,24 @@ async function main() {
     DEV_SAMO_DECIMALS
   );
 
-  // トランザクションを作成し、命令を追加
+  //LANG:JP トランザクションを作成し、命令を追加
+  //LANG:EN Create the transaction and add the instruction
   const tx = new Transaction();
-  // 送り先のトークンアカウントを作成(必要時)
+  //LANG:JP 送り先のトークンアカウントを作成(必要時)
+  //LANG:EN Create the destination associated token account (if needed)
   create_ata_ix.instructions.map((ix) => tx.add(ix));
-  // devSAMOを送る
+  //LANG:JP devSAMOを送る
+  //LANG:EN Send devSAMO
   tx.add(transfer_ix);
 
-  // トランザクションを送信
+  //LANG:JP トランザクションを送信
+  //LANG:EN Send the transaction
   const signers = [keypair];
   const signature = await connection.sendTransaction(tx, signers);
   console.log("signature:", signature);
 
-  // トランザクション完了待ち
+  //LANG:JP トランザクション完了待ち
+  //LANG:EN Wait for the transaction to be confirmed
   const latest_blockhash = await connection.getLatestBlockhash();
   await connection.confirmTransaction({signature, ...latest_blockhash});
 }

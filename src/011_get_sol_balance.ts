@@ -22,10 +22,8 @@ async function main() {
 
   //LANG:JP SOL 残高取得
   //LANG:JP Connection クラスの getBalance メソッドを利用する
-  //LANG:JP https://solana-labs.github.io/solana-web3.js/classes/Connection.html#getBalance
   //LANG:EN Obtain the SOL balance
   //LANG:EN Use the getBalance method from the Connection class
-  //LANG:EN https://solana-labs.github.io/solana-web3.js/classes/Connection.html#getBalance
   const sol_balance = await connection.getBalance(keypair.publicKey);
 
   //LANG:JP SOL 残高表示

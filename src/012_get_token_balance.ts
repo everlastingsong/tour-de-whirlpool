@@ -24,29 +24,17 @@ async function main() {
   };
 
   //LANG:JP ウォレットの公開鍵からトークンアカウントを取得
-  //LANG:JP https://solana-labs.github.io/solana-web3.js/classes/Connection.html#getTokenAccountsByOwner
-  //LANG:JP
-  //LANG:JP {
-  //LANG:JP   context: { apiVersion: '1.10.24', slot: 140791186 },
-  //LANG:JP   value: [
-  //LANG:JP     { account: [Object], pubkey: [PublicKey] },
-  //LANG:JP     { account: [Object], pubkey: [PublicKey] },
-  //LANG:JP     { account: [Object], pubkey: [PublicKey] },
-  //LANG:JP     { account: [Object], pubkey: [PublicKey] }
-  //LANG:JP   ]
-  //LANG:JP }
   //LANG:EN Obtain the token accounts from the wallet's public key
-  //LANG:EN https://solana-labs.github.io/solana-web3.js/classes/Connection.html#getTokenAccountsByOwner
-  //LANG:EN
-  //LANG:EN {
-  //LANG:EN   context: { apiVersion: '1.10.24', slot: 140791186 },
-  //LANG:EN   value: [
-  //LANG:EN     { account: [Object], pubkey: [PublicKey] },
-  //LANG:EN     { account: [Object], pubkey: [PublicKey] },
-  //LANG:EN     { account: [Object], pubkey: [PublicKey] },
-  //LANG:EN     { account: [Object], pubkey: [PublicKey] }
-  //LANG:EN   ]
-  //LANG:EN }
+  //
+  // {
+  //   context: { apiVersion: '1.10.24', slot: 140791186 },
+  //   value: [
+  //     { account: [Object], pubkey: [PublicKey] },
+  //     { account: [Object], pubkey: [PublicKey] },
+  //     { account: [Object], pubkey: [PublicKey] },
+  //     { account: [Object], pubkey: [PublicKey] }
+  //   ]
+  // }
   const accounts = await connection.getTokenAccountsByOwner(
     keypair.publicKey,
     { programId: TOKEN_PROGRAM_ID }
