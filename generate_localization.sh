@@ -1,6 +1,6 @@
 #!/bin/bash
 
-TARGET_DIR="localization"
+TARGET_DIR="src_localization"
 LANG_LIST="JP EN"
 
 for lang in $LANG_LIST
