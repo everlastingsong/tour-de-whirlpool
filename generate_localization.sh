@@ -1,6 +1,7 @@
 #!/bin/bash
 
-LANG_LIST="JP EN CN"
+TARGET_DIR="localization"
+LANG_LIST="JP EN"
 
 for lang in $LANG_LIST
 do
@@ -24,10 +25,10 @@ do
     echo "  sed command: $command"
 
     # generate
-    mkdir -p target/$lang
+    mkdir -p $TARGET_DIR/$lang
     for f in $(ls src/)
     do
-        echo "  generate: target/$lang/$f"
-        grep -v -E $filter src/$f | sed $command > target/$lang/$f
+        echo "  generate: $TARGET_DIR/$lang/$f"
+        grep -v -E $filter src/$f | sed $command > $TARGET_DIR/$lang/$f
     done
 done
