@@ -1,6 +1,6 @@
-import { Provider, BN } from "@project-serum/anchor";
+import { AnchorProvider, BN } from "@project-serum/anchor";
 import {
-  WhirlpoolContext, AccountFetcher, buildWhirlpoolClient, ORCA_WHIRLPOOL_PROGRAM_ID,
+  WhirlpoolContext, buildWhirlpoolClient, ORCA_WHIRLPOOL_PROGRAM_ID,
   PDAUtil, PriceMath, PoolUtil
 } from "@orca-so/whirlpools-sdk";
 import { TOKEN_PROGRAM_ID } from "@solana/spl-token";
@@ -12,10 +12,9 @@ import { DecimalUtil, TokenUtil } from "@orca-so/common-sdk";
 
 async function main() {
   // WhirlpoolClient 作成
-  const provider = Provider.env();
+  const provider = AnchorProvider.env();
   const ctx = WhirlpoolContext.withProvider(provider, ORCA_WHIRLPOOL_PROGRAM_ID);
-  const fetcher = new AccountFetcher(ctx.connection);
-  const client = buildWhirlpoolClient(ctx, fetcher);
+  const client = buildWhirlpoolClient(ctx);
 
   console.log("endpoint:", ctx.connection.rpcEndpoint);
   console.log("wallet pubkey:", ctx.wallet.publicKey.toBase58());
@@ -35,7 +34,7 @@ async function main() {
   }).filter(pubkey => pubkey !== undefined);
 
   // Whirlpool のポジションのアドレスからデータを取得
-  const whirlpool_position_candidate_datas = await fetcher.listPositions(whirlpool_position_candidate_pubkeys, true);
+  const whirlpool_position_candidate_datas = await ctx.fetcher.listPositions(whirlpool_position_candidate_pubkeys, true);
   // 正しくデータ取得できたアドレスのみポジションのアドレスとして残す
   const whirlpool_positions = whirlpool_position_candidate_pubkeys.filter((pubkey, i) => 
     whirlpool_position_candidate_datas[i] !== null

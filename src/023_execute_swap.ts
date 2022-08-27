@@ -1,8 +1,8 @@
 import { PublicKey } from "@solana/web3.js";
-import { Provider } from "@project-serum/anchor";
+import { AnchorProvider } from "@project-serum/anchor";
 import { DecimalUtil, Percentage } from "@orca-so/common-sdk";
 import {
-  WhirlpoolContext, AccountFetcher, buildWhirlpoolClient, ORCA_WHIRLPOOL_PROGRAM_ID,
+  WhirlpoolContext, buildWhirlpoolClient, ORCA_WHIRLPOOL_PROGRAM_ID,
   PDAUtil, swapQuoteByInputToken
 } from "@orca-so/whirlpools-sdk";
 import Decimal from "decimal.js";
@@ -13,10 +13,9 @@ import Decimal from "decimal.js";
 
 async function main() {
   // WhirlpoolClient 作成
-  const provider = Provider.env();
+  const provider = AnchorProvider.env();
   const ctx = WhirlpoolContext.withProvider(provider, ORCA_WHIRLPOOL_PROGRAM_ID);
-  const fetcher = new AccountFetcher(ctx.connection);
-  const client = buildWhirlpoolClient(ctx, fetcher);
+  const client = buildWhirlpoolClient(ctx);
 
   console.log("endpoint:", ctx.connection.rpcEndpoint);
   console.log("wallet pubkey:", ctx.wallet.publicKey.toBase58());
@@ -54,7 +53,7 @@ async function main() {
     // 許容するスリッページ (10/1000 = 1%)
     Percentage.fromFraction(10, 1000),
     ctx.program.programId,
-    fetcher,
+    ctx.fetcher,
     true
   );
 

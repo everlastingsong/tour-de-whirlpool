@@ -1,5 +1,5 @@
-import { Provider } from "@project-serum/anchor";
-import { WhirlpoolContext, AccountFetcher, buildWhirlpoolClient, ORCA_WHIRLPOOL_PROGRAM_ID } from "@orca-so/whirlpools-sdk";
+import { AnchorProvider } from "@project-serum/anchor";
+import { WhirlpoolContext, buildWhirlpoolClient, ORCA_WHIRLPOOL_PROGRAM_ID } from "@orca-so/whirlpools-sdk";
 
 // UNIX/Linux/Mac
 // bash$ export ANCHOR_PROVIDER_URL=https://api.devnet.solana.com
@@ -12,10 +12,9 @@ import { WhirlpoolContext, AccountFetcher, buildWhirlpoolClient, ORCA_WHIRLPOOL_
 // > ts-node this_script.ts
 
 async function main() {
-  const provider = Provider.env();
+  const provider = AnchorProvider.env();
   const ctx = WhirlpoolContext.withProvider(provider, ORCA_WHIRLPOOL_PROGRAM_ID);
-  const fetcher = new AccountFetcher(ctx.connection);
-  const client = buildWhirlpoolClient(ctx, fetcher);
+  const client = buildWhirlpoolClient(ctx);
 
   console.log("endpoint:", ctx.connection.rpcEndpoint);
   console.log("wallet pubkey:", ctx.wallet.publicKey.toBase58());

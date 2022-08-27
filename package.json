@@ -10,6 +10,6 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@orca-so/whirlpools-sdk": "^0.4.0"
+    "@orca-so/whirlpools-sdk": "^0.5.1"
   }
 }

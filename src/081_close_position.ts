@@ -1,7 +1,7 @@
 import { PublicKey } from "@solana/web3.js";
-import { Provider } from "@project-serum/anchor";
+import { AnchorProvider } from "@project-serum/anchor";
 import {
-  WhirlpoolContext, AccountFetcher, buildWhirlpoolClient, ORCA_WHIRLPOOL_PROGRAM_ID,
+  WhirlpoolContext, buildWhirlpoolClient, ORCA_WHIRLPOOL_PROGRAM_ID,
   PDAUtil, PoolUtil, WhirlpoolIx, decreaseLiquidityQuoteByLiquidityWithParams
 } from "@orca-so/whirlpools-sdk";
 import {
@@ -16,10 +16,9 @@ import {
 
 async function main() {
   // WhirlpoolClient 作成
-  const provider = Provider.env();
+  const provider = AnchorProvider.env();
   const ctx = WhirlpoolContext.withProvider(provider, ORCA_WHIRLPOOL_PROGRAM_ID);
-  const fetcher = new AccountFetcher(ctx.connection);
-  const client = buildWhirlpoolClient(ctx, fetcher);
+  const client = buildWhirlpoolClient(ctx);
 
   console.log("endpoint:", ctx.connection.rpcEndpoint);
   console.log("wallet pubkey:", ctx.wallet.publicKey.toBase58());
@@ -68,7 +67,7 @@ async function main() {
       ctx.connection,
       position_owner,
       mint,
-      () => fetcher.getAccountRentExempt()
+      () => ctx.fetcher.getAccountRentExempt()
     );
     required_ta_ix.push(ix);
     token_account_map.set(mint_b58, address);
@@ -169,7 +168,7 @@ async function main() {
   );
 
   // トランザクション組み立て
-  const tx_builder = new TransactionBuilder(ctx.provider);
+  const tx_builder = new TransactionBuilder(ctx.connection, ctx.wallet);
   // トークンアカウント作成
   required_ta_ix.map((ix) => tx_builder.addInstruction(ix));
   tx_builder
