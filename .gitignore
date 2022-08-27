@@ -2,3 +2,6 @@
 src/.DS_Store
 node_modules
 wallet.json
+.idea
+target
+yarn.lock
