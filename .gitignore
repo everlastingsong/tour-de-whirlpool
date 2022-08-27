@@ -5,4 +5,4 @@ wallet.json
 .idea
 yarn.lock
 package-lock.json
-localization/wallet.json
+src_localization/wallet.json
