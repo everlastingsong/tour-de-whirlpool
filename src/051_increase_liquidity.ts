@@ -75,7 +75,8 @@ async function main() {
   console.log("signature:", signature);
 
   // トランザクション完了待ち
-  await ctx.connection.confirmTransaction(signature, "confirmed");
+  const latest_blockhash = await ctx.connection.getLatestBlockhash();
+  await ctx.connection.confirmTransaction({signature, ...latest_blockhash}, "confirmed");
 
   // トランザクション実行後の流動性を表示
   console.log("liquidity(after):", (await position.refreshData()).liquidity.toString());

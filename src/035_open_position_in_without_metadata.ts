@@ -97,7 +97,8 @@ async function main() {
   console.log("position NFT:", open_position_tx.positionMint.toBase58());
 
   // トランザクション完了待ち
-  await ctx.connection.confirmTransaction(signature, "confirmed");
+  const latest_blockhash = await ctx.connection.getLatestBlockhash();
+  await ctx.connection.confirmTransaction({signature, ...latest_blockhash}, "confirmed");
 }
 
 main();

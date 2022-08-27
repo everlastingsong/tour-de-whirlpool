@@ -188,7 +188,8 @@ async function main() {
   console.log("signature", signature);
 
   // トランザクション完了待ち
-  await ctx.connection.confirmTransaction(signature, "confirmed");
+  const latest_blockhash = await ctx.connection.getLatestBlockhash();
+  await ctx.connection.confirmTransaction({signature, ...latest_blockhash}, "confirmed");
 }
 
 main();

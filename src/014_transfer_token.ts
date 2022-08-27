@@ -62,7 +62,8 @@ async function main() {
   console.log("signature:", signature);
 
   // トランザクション完了待ち
-  await connection.confirmTransaction(signature, COMMITMENT);
+  const latest_blockhash = await connection.getLatestBlockhash();
+  await connection.confirmTransaction({signature, ...latest_blockhash});
 }
 
 main();
