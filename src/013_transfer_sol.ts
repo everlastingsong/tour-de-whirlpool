@@ -41,12 +41,8 @@ async function main() {
 
   //LANG:JP トランザクション完了待ち
   //LANG:EN Wait for the transaction to complete
-  const latestBlockhash = await connection.getLatestBlockhash();
-  await connection.confirmTransaction({
-    blockhash: latestBlockhash.blockhash,
-    lastValidBlockHeight: latestBlockhash.lastValidBlockHeight,
-    signature
-  });
+  const latest_blockhash = await connection.getLatestBlockhash();
+  await connection.confirmTransaction({signature, ...latest_blockhash});
 }
 
 main();

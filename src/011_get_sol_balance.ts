@@ -17,7 +17,7 @@ async function main() {
   //LANG:JP 公開鍵を表示する場合は Base58 形式の文字列で表示する
   //LANG:EN Display the RPC and the wallet's public key
   //LANG:EN When displaying the public key, use base58 encoding
-  console.log("endpoint", connection.rpcEndpoint);
+  console.log("endpoint:", connection.rpcEndpoint);
   console.log("wallet pubkey:", keypair.publicKey.toBase58());
 
   //LANG:JP SOL 残高取得
