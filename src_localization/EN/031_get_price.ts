@@ -5,12 +5,12 @@ import {
   PDAUtil, PriceMath
 } from "@orca-so/whirlpools-sdk";
 
-// スクリプト実行前に環境変数定義が必要です
+// Environment variables must be defined before script execution
 // ANCHOR_PROVIDER_URL=https://api.devnet.solana.com
 // ANCHOR_WALLET=wallet.json
 
 async function main() {
-  // WhirlpoolClient 作成
+  // Create WhirlpoolClient
   const provider = AnchorProvider.env();
   const ctx = WhirlpoolContext.withProvider(provider, ORCA_WHIRLPOOL_PROGRAM_ID);
   const client = buildWhirlpoolClient(ctx);
@@ -18,17 +18,17 @@ async function main() {
   console.log("endpoint:", ctx.connection.rpcEndpoint);
   console.log("wallet pubkey:", ctx.wallet.publicKey.toBase58());
 
-  // トークン定義
+  // Token definition
   // devToken specification
   // https://everlastingsong.github.io/nebula/
   const devUSDC = {mint: new PublicKey("BRjpCHtyQLNCo8gqRUr8jtdAj5AjPYQaoqbvcZiHok1k"), decimals: 6};
   const devSAMO = {mint: new PublicKey("Jd4M8bfJG3sAkd82RsGWyEXoaBXQP7njFzBwEaCTuDa"), decimals: 9};
 
-  // Whirlpool の Config アカウント
+  // WhirlpoolsConfig account
   // devToken ecosystem / Orca Whirlpools
   const NEBULA_WHIRLPOOLS_CONFIG = new PublicKey("FcrweFY1G9HJAHG5inkGB6pKg1HZ6x9UC2WioAfWrGkR");
 
-  // devSAMO/devUSDC プール取得
+  // Get devSAMO/devUSDC whirlpool
   const tick_spacing = 64;
   const whirlpool_pubkey = PDAUtil.getWhirlpool(
       ORCA_WHIRLPOOL_PROGRAM_ID,
@@ -37,7 +37,7 @@ async function main() {
   console.log("whirlpool_key:", whirlpool_pubkey.toBase58());
   const whirlpool = await client.getPool(whirlpool_pubkey);
 
-  // プールにおける現在価格を取得
+  // Get the current price of the pool
   const sqrt_price_x64 = whirlpool.getData().sqrtPrice;
   const price = PriceMath.sqrtPriceX64ToPrice(sqrt_price_x64, devSAMO.decimals, devUSDC.decimals);
 

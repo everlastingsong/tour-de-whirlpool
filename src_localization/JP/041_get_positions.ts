@@ -38,7 +38,7 @@ async function main() {
     );
 
     // トークン数が 1 の場合のみ Whirlpool のポジションのアドレスを返す(空のトークンアカウントやNFTではないものは無視)
-    return (parsed.amount as BN).eq(new BN(1)) ? pda.publicKey : undefined;
+    return new BN(parsed.amount.toString()).eq(new BN(1)) ? pda.publicKey : undefined;
   }).filter(pubkey => pubkey !== undefined);
 
   // Whirlpool のポジションのアドレスからデータを取得
