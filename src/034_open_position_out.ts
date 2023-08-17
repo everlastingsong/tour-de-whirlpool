@@ -1,5 +1,5 @@
 import { PublicKey } from "@solana/web3.js";
-import { AnchorProvider } from "@project-serum/anchor";
+import { AnchorProvider } from "@coral-xyz/anchor";
 import {
   WhirlpoolContext, buildWhirlpoolClient, ORCA_WHIRLPOOL_PROGRAM_ID,
   PDAUtil, PriceMath, increaseLiquidityQuoteByInputTokenWithParams
@@ -54,7 +54,7 @@ async function main() {
   //LANG:EN Set price range, amount of tokens to deposit, and acceptable slippage
   const lower_price = new Decimal("0.03");
   const upper_price = new Decimal("0.04");
-  const dev_samo_amount = DecimalUtil.toU64(new Decimal("10" /* devSAMO */), devSAMO.decimals);
+  const dev_samo_amount = DecimalUtil.toBN(new Decimal("10" /* devSAMO */), devSAMO.decimals);
   const slippage = Percentage.fromFraction(10, 1000); // 1%
 
   //LANG:JP 価格帯を調整 (全ての価格が設定可能ではなく、範囲指定に利用できる価格は決まっている(InitializableTickIndexに対応する価格))
@@ -95,8 +95,8 @@ async function main() {
 
   //LANG:JP 見積もり結果表示
   //LANG:EN Output the estimation
-  console.log("devSAMO max input", DecimalUtil.fromU64(quote.tokenMaxA, token_a.decimals).toFixed(token_a.decimals));
-  console.log("devUSDC max input", DecimalUtil.fromU64(quote.tokenMaxB, token_b.decimals).toFixed(token_b.decimals));
+  console.log("devSAMO max input", DecimalUtil.fromBN(quote.tokenMaxA, token_a.decimals).toFixed(token_a.decimals));
+  console.log("devUSDC max input", DecimalUtil.fromBN(quote.tokenMaxB, token_b.decimals).toFixed(token_b.decimals));
 
   //LANG:JP トランザクションを作成
   //LANG:EN Create a transaction

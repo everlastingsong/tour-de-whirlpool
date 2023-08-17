@@ -1,5 +1,5 @@
 import { PublicKey } from "@solana/web3.js";
-import { AnchorProvider } from "@project-serum/anchor";
+import { AnchorProvider } from "@coral-xyz/anchor";
 import {
   WhirlpoolContext, buildWhirlpoolClient, ORCA_WHIRLPOOL_PROGRAM_ID,
   increaseLiquidityQuoteByInputTokenWithParams
@@ -37,7 +37,7 @@ async function main() {
   const whirlpool = await client.getPool(position.getData().whirlpool);
 
   // 追加デポジットするトークンの量、許容するスリッページを設定
-  const dev_usdc_amount = DecimalUtil.toU64(new Decimal("1" /* devUSDC */), devUSDC.decimals);
+  const dev_usdc_amount = DecimalUtil.toBN(new Decimal("1" /* devUSDC */), devUSDC.decimals);
   const slippage = Percentage.fromFraction(10, 1000); // 1%
 
   // 見積もりを取得
@@ -61,8 +61,8 @@ async function main() {
   });
 
   // 見積もり結果表示
-  console.log("devSAMO max input", DecimalUtil.fromU64(quote.tokenMaxA, token_a.decimals).toFixed(token_a.decimals));
-  console.log("devUSDC max input", DecimalUtil.fromU64(quote.tokenMaxB, token_b.decimals).toFixed(token_b.decimals));
+  console.log("devSAMO max input", DecimalUtil.fromBN(quote.tokenMaxA, token_a.decimals).toFixed(token_a.decimals));
+  console.log("devUSDC max input", DecimalUtil.fromBN(quote.tokenMaxB, token_b.decimals).toFixed(token_b.decimals));
 
   // トランザクション実行前の流動性を表示
   console.log("liquidity(before):", position.getData().liquidity.toString());

@@ -1,12 +1,13 @@
 import { PublicKey } from "@solana/web3.js";
-import { AnchorProvider } from "@project-serum/anchor";
+import { AnchorProvider } from "@coral-xyz/anchor";
 import {
   WhirlpoolContext, buildWhirlpoolClient, ORCA_WHIRLPOOL_PROGRAM_ID,
   PDAUtil, PoolUtil, WhirlpoolIx
 } from "@orca-so/whirlpools-sdk";
 import {
-  Instruction, EMPTY_INSTRUCTION, deriveATA, resolveOrCreateATA, TransactionBuilder
+  Instruction, EMPTY_INSTRUCTION, resolveOrCreateATA, TransactionBuilder
 } from "@orca-so/common-sdk";
+import { getAssociatedTokenAddressSync } from "@solana/spl-token";
 
 // スクリプト実行前に環境変数定義が必要です
 // ANCHOR_PROVIDER_URL=https://api.devnet.solana.com
@@ -30,7 +31,7 @@ async function main() {
   // ポジション・プール取得
   const position = await client.getPosition(position_pubkey);
   const position_owner = ctx.wallet.publicKey;
-  const position_token_account = await deriveATA(position_owner, position.getData().positionMint);
+  const position_token_account = getAssociatedTokenAddressSync(position.getData().positionMint, position_owner);
   const whirlpool_pubkey = position.getData().whirlpool;
   const whirlpool = await client.getPool(whirlpool_pubkey);
   const token_a = whirlpool.getTokenAInfo();

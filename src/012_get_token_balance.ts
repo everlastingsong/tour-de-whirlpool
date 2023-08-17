@@ -1,6 +1,8 @@
 import { Keypair, Connection } from "@solana/web3.js";
 import { TOKEN_PROGRAM_ID } from "@solana/spl-token";
-import { TokenUtil, DecimalUtil } from "@orca-so/common-sdk";
+import { DecimalUtil } from "@orca-so/common-sdk";
+import { unpackAccount } from "@solana/spl-token";
+import BN from "bn.js";
 import secret from "../wallet.json";
 
 const RPC_ENDPOINT_URL = "https://api.devnet.solana.com";
@@ -48,7 +50,7 @@ async function main() {
 
     //LANG:JP デコード
     //LANG:EN Deserialize
-    const parsed_token_account = TokenUtil.deserializeTokenAccount(value.account.data);
+    const parsed_token_account = unpackAccount(value.pubkey, value.account);
     //LANG:JP mint アドレスからどのトークンのトークンアカウントか特定
     //LANG:EN Use the mint address to determine which token account is for which token
     const mint = parsed_token_account.mint;
@@ -62,7 +64,7 @@ async function main() {
     const amount = parsed_token_account.amount;
     //LANG:JP 残高は整数で管理されているため、UI 表示用に変換
     //LANG:EN The balance is managed as an integer value, so it must be converted for UI display
-    const ui_amount = DecimalUtil.fromU64(amount, token_def.decimals);
+    const ui_amount = DecimalUtil.fromBN(new BN(amount.toString()), token_def.decimals);
 
     console.log(
       "TokenAccount:", value.pubkey.toBase58(),

@@ -1,13 +1,14 @@
 import { PublicKey } from "@solana/web3.js";
-import { AnchorProvider } from "@project-serum/anchor";
+import { AnchorProvider } from "@coral-xyz/anchor";
 import {
   WhirlpoolContext, buildWhirlpoolClient, ORCA_WHIRLPOOL_PROGRAM_ID,
   PDAUtil, PoolUtil, WhirlpoolIx, decreaseLiquidityQuoteByLiquidityWithParams
 } from "@orca-so/whirlpools-sdk";
 import {
-  Instruction, EMPTY_INSTRUCTION, deriveATA, resolveOrCreateATA, TransactionBuilder, Percentage,
+  Instruction, EMPTY_INSTRUCTION, resolveOrCreateATA, TransactionBuilder, Percentage,
   DecimalUtil
 } from "@orca-so/common-sdk";
+import { getAssociatedTokenAddressSync } from "@solana/spl-token";
 
 // Environment variables must be defined before script execution
 // ANCHOR_PROVIDER_URL=https://api.devnet.solana.com
@@ -34,7 +35,7 @@ async function main() {
   // Get the position and the pool to which the position belongs
   const position = await client.getPosition(position_pubkey);
   const position_owner = ctx.wallet.publicKey;
-  const position_token_account = await deriveATA(position_owner, position.getData().positionMint);
+  const position_token_account = getAssociatedTokenAddressSync(position.getData().positionMint, position_owner);
   const whirlpool_pubkey = position.getData().whirlpool;
   const whirlpool = await client.getPool(whirlpool_pubkey);
   const whirlpool_data = whirlpool.getData();
@@ -134,8 +135,8 @@ async function main() {
   });
 
   // Output the estimation
-  console.log("devSAMO min output", DecimalUtil.fromU64(quote.tokenMinA, token_a.decimals).toFixed(token_a.decimals));
-  console.log("devUSDC min output", DecimalUtil.fromU64(quote.tokenMinB, token_b.decimals).toFixed(token_b.decimals));
+  console.log("devSAMO min output", DecimalUtil.fromBN(quote.tokenMinA, token_a.decimals).toFixed(token_a.decimals));
+  console.log("devUSDC min output", DecimalUtil.fromBN(quote.tokenMinB, token_b.decimals).toFixed(token_b.decimals));
   
   // Build the instruction to decrease liquidity
   const decrease_liquidity_ix = WhirlpoolIx.decreaseLiquidityIx(

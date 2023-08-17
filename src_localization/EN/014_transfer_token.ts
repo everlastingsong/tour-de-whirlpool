@@ -1,6 +1,6 @@
 import { Keypair, Connection, PublicKey, Transaction } from "@solana/web3.js";
-import { TOKEN_PROGRAM_ID, Token, AccountLayout } from "@solana/spl-token";
-import { DecimalUtil, deriveATA, resolveOrCreateATA } from "@orca-so/common-sdk";
+import { TOKEN_PROGRAM_ID, AccountLayout, getAssociatedTokenAddressSync, createTransferCheckedInstruction } from "@solana/spl-token";
+import { resolveOrCreateATA, ZERO } from "@orca-so/common-sdk";
 import secret from "../wallet.json";
 
 const RPC_ENDPOINT_URL = "https://api.devnet.solana.com";
@@ -25,7 +25,7 @@ async function main() {
   const amount = 1_000_000_000; // 1 devSAMO
 
   // Obtain the associated token account from the source wallet
-  const src_token_account = await deriveATA(keypair.publicKey, DEV_SAMO_MINT);
+  const src_token_account = getAssociatedTokenAddressSync(DEV_SAMO_MINT, keypair.publicKey);
 
   // Obtain the associated token account for the destination wallet.
   const {address: dest_token_account, ...create_ata_ix} = await resolveOrCreateATA(
@@ -33,20 +33,20 @@ async function main() {
     dest_pubkey,
     DEV_SAMO_MINT,
     ()=>connection.getMinimumBalanceForRentExemption(AccountLayout.span),
-    DecimalUtil.toU64(DecimalUtil.fromNumber(0)),
+    ZERO,
     keypair.publicKey
   );
 
   // Create the instruction to send devSAMO
-  const transfer_ix = Token.createTransferCheckedInstruction(
-    TOKEN_PROGRAM_ID,
+  const transfer_ix = createTransferCheckedInstruction(
     src_token_account,
     DEV_SAMO_MINT,
     dest_token_account,
     keypair.publicKey,
-    [],
     amount,
-    DEV_SAMO_DECIMALS
+    DEV_SAMO_DECIMALS,
+    [],
+    TOKEN_PROGRAM_ID
   );
 
   // Create the transaction and add the instruction

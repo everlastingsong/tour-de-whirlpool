@@ -1,6 +1,6 @@
 import { Keypair, Connection, PublicKey, Transaction } from "@solana/web3.js";
-import { TOKEN_PROGRAM_ID, Token, AccountLayout } from "@solana/spl-token";
-import { DecimalUtil, deriveATA, resolveOrCreateATA } from "@orca-so/common-sdk";
+import { TOKEN_PROGRAM_ID, AccountLayout, getAssociatedTokenAddressSync, createTransferCheckedInstruction } from "@solana/spl-token";
+import { resolveOrCreateATA, ZERO } from "@orca-so/common-sdk";
 import secret from "../wallet.json";
 
 const RPC_ENDPOINT_URL = "https://api.devnet.solana.com";
@@ -25,7 +25,7 @@ async function main() {
   const amount = 1_000_000_000; // 1 devSAMO
 
   // 送信元のトークンアカウント取得
-  const src_token_account = await deriveATA(keypair.publicKey, DEV_SAMO_MINT);
+  const src_token_account = getAssociatedTokenAddressSync(DEV_SAMO_MINT, keypair.publicKey);
 
   // 送信先のトークンアカウント取得 (トークンアカウントが存在しない場合は create_ata_ix に作成用の命令が入る)
   const {address: dest_token_account, ...create_ata_ix} = await resolveOrCreateATA(
@@ -33,20 +33,20 @@ async function main() {
     dest_pubkey,
     DEV_SAMO_MINT,
     ()=>connection.getMinimumBalanceForRentExemption(AccountLayout.span),
-    DecimalUtil.toU64(DecimalUtil.fromNumber(0)),
+    ZERO,
     keypair.publicKey
   );
 
   // devSAMOを送る命令を作成
-  const transfer_ix = Token.createTransferCheckedInstruction(
-    TOKEN_PROGRAM_ID,
+  const transfer_ix = createTransferCheckedInstruction(
     src_token_account,
     DEV_SAMO_MINT,
     dest_token_account,
     keypair.publicKey,
-    [],
     amount,
-    DEV_SAMO_DECIMALS
+    DEV_SAMO_DECIMALS,
+    [],
+    TOKEN_PROGRAM_ID
   );
 
   // トランザクションを作成し、命令を追加

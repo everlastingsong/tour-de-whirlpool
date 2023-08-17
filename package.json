@@ -10,6 +10,14 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@orca-so/whirlpools-sdk": "^0.5.1"
+    "@orca-so/whirlpools-sdk": "^0.11.4",
+    "@orca-so/common-sdk": "^0.3.3",
+    "@coral-xyz/anchor": "^0.27.0",
+    "@solana/web3.js": "^1.78.4",
+    "@solana/spl-token": "^0.3.8",
+    "decimal.js": "^10.3.1"
+  },
+  "devDependencies": {
+    "@types/bn.js": "^5.1.0"
   }
 }
