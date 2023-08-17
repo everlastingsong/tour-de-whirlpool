@@ -1,9 +1,9 @@
 import { PublicKey } from "@solana/web3.js";
-import { AnchorProvider } from "@project-serum/anchor";
+import { AnchorProvider } from "@coral-xyz/anchor";
 import { DecimalUtil, Percentage } from "@orca-so/common-sdk";
 import {
   WhirlpoolContext, buildWhirlpoolClient, ORCA_WHIRLPOOL_PROGRAM_ID,
-  PDAUtil, swapQuoteByInputToken
+  PDAUtil, swapQuoteByInputToken, IGNORE_CACHE
 } from "@orca-so/whirlpools-sdk";
 import Decimal from "decimal.js";
 
@@ -49,18 +49,18 @@ async function main() {
     whirlpool,
     // 入力するトークン
     devUSDC.mint,
-    DecimalUtil.toU64(amount_in, devUSDC.decimals),
+    DecimalUtil.toBN(amount_in, devUSDC.decimals),
     // 許容するスリッページ (10/1000 = 1%)
     Percentage.fromFraction(10, 1000),
     ctx.program.programId,
     ctx.fetcher,
-    true
+    IGNORE_CACHE,
   );
 
   // 見積もり結果表示
-  console.log("estimatedAmountIn:", DecimalUtil.fromU64(quote.estimatedAmountIn, devUSDC.decimals).toString(), "devUSDC");
-  console.log("estimatedAmountOut:", DecimalUtil.fromU64(quote.estimatedAmountOut, devSAMO.decimals).toString(), "devSAMO");
-  console.log("otherAmountThreshold:", DecimalUtil.fromU64(quote.otherAmountThreshold, devSAMO.decimals).toString(), "devSAMO");
+  console.log("estimatedAmountIn:", DecimalUtil.fromBN(quote.estimatedAmountIn, devUSDC.decimals).toString(), "devUSDC");
+  console.log("estimatedAmountOut:", DecimalUtil.fromBN(quote.estimatedAmountOut, devSAMO.decimals).toString(), "devSAMO");
+  console.log("otherAmountThreshold:", DecimalUtil.fromBN(quote.otherAmountThreshold, devSAMO.decimals).toString(), "devSAMO");
 
   // トランザクションを送信
   const tx = await whirlpool.swap(quote);

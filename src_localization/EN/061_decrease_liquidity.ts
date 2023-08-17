@@ -1,5 +1,5 @@
 import { PublicKey } from "@solana/web3.js";
-import { AnchorProvider, BN } from "@project-serum/anchor";
+import { AnchorProvider, BN } from "@coral-xyz/anchor";
 import {
   WhirlpoolContext, buildWhirlpoolClient, ORCA_WHIRLPOOL_PROGRAM_ID,
   decreaseLiquidityQuoteByLiquidityWithParams
@@ -57,8 +57,8 @@ async function main() {
   });
 
   // Output the estimation
-  console.log("devSAMO min output", DecimalUtil.fromU64(quote.tokenMinA, token_a.decimals).toFixed(token_a.decimals));
-  console.log("devUSDC min output", DecimalUtil.fromU64(quote.tokenMinB, token_b.decimals).toFixed(token_b.decimals));
+  console.log("devSAMO min output", DecimalUtil.fromBN(quote.tokenMinA, token_a.decimals).toFixed(token_a.decimals));
+  console.log("devUSDC min output", DecimalUtil.fromBN(quote.tokenMinB, token_b.decimals).toFixed(token_b.decimals));
 
   // Output the liquidity before transaction execution
   console.log("liquidity(before):", position.getData().liquidity.toString());

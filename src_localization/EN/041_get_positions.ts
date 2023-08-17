@@ -1,10 +1,10 @@
-import { AnchorProvider, BN } from "@project-serum/anchor";
+import { AnchorProvider, BN } from "@coral-xyz/anchor";
 import {
   WhirlpoolContext, buildWhirlpoolClient, ORCA_WHIRLPOOL_PROGRAM_ID,
-  PDAUtil, PriceMath, PoolUtil
+  PDAUtil, PriceMath, PoolUtil, IGNORE_CACHE
 } from "@orca-so/whirlpools-sdk";
-import { TOKEN_PROGRAM_ID } from "@solana/spl-token";
-import { DecimalUtil, TokenUtil } from "@orca-so/common-sdk";
+import { TOKEN_PROGRAM_ID, unpackAccount } from "@solana/spl-token";
+import { DecimalUtil } from "@orca-so/common-sdk";
 
 // Environment variables must be defined before script execution
 // ANCHOR_PROVIDER_URL=https://api.devnet.solana.com
@@ -24,7 +24,7 @@ async function main() {
 
   // Get candidate addresses for the position
   const whirlpool_position_candidate_pubkeys = token_accounts.map((ta) => {
-    const parsed = TokenUtil.deserializeTokenAccount(ta.account.data);
+    const parsed = unpackAccount(ta.pubkey, ta.account);
 
     // Derive the address of Whirlpool's position from the mint address (whether or not it exists)
     const pda = PDAUtil.getPosition(ctx.program.programId, parsed.mint);
@@ -42,7 +42,7 @@ async function main() {
   }).filter(pubkey => pubkey !== undefined);
 
   // Get data from Whirlpool position addresses
-  const whirlpool_position_candidate_datas = await ctx.fetcher.listPositions(whirlpool_position_candidate_pubkeys, true);
+  const whirlpool_position_candidate_datas = await ctx.fetcher.getPositions(whirlpool_position_candidate_pubkeys, IGNORE_CACHE);
   // Leave only addresses with correct data acquisition as position addresses
   const whirlpool_positions = whirlpool_position_candidate_pubkeys.filter((pubkey, i) => 
     whirlpool_position_candidate_datas[i] !== null
