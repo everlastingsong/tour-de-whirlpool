@@ -1,6 +1,7 @@
 #!/bin/bash
 
-TARGET_DIR="src_localization"
+SRC_DIR="src_i18n"
+TARGET_DIR="src"
 LANG_LIST="JP EN"
 
 for lang in $LANG_LIST
@@ -26,9 +27,9 @@ do
 
     # generate
     mkdir -p $TARGET_DIR/$lang
-    for f in $(ls src/)
+    for f in $(ls $SRC_DIR)
     do
         echo "  generate: $TARGET_DIR/$lang/$f"
-        grep -v -E $filter src/$f | sed $command > $TARGET_DIR/$lang/$f
+        grep -v -E $filter $SRC_DIR/$f | sed $command > $TARGET_DIR/$lang/$f
     done
 done
