@@ -56,8 +56,8 @@ async function main() {
   const token_b = whirlpool.getTokenBInfo();
   const lower_tick_index = PriceMath.priceToInitializableTickIndex(lower_price, token_a.decimals, token_b.decimals, whirlpool_data.tickSpacing);
   const upper_tick_index = PriceMath.priceToInitializableTickIndex(upper_price, token_a.decimals, token_b.decimals, whirlpool_data.tickSpacing);
-  console.log("lower & upper tick_index", lower_tick_index, upper_tick_index);
-  console.log("lower & upper price",
+  console.log("lower & upper tick_index:", lower_tick_index, upper_tick_index);
+  console.log("lower & upper price:",
     PriceMath.tickIndexToPrice(lower_tick_index, token_a.decimals, token_b.decimals).toFixed(token_b.decimals),
     PriceMath.tickIndexToPrice(upper_tick_index, token_a.decimals, token_b.decimals).toFixed(token_b.decimals)
   );
@@ -80,8 +80,8 @@ async function main() {
   });
 
   // 見積もり結果表示
-  console.log("devSAMO max input", DecimalUtil.fromBN(quote.tokenMaxA, token_a.decimals).toFixed(token_a.decimals));
-  console.log("devUSDC max input", DecimalUtil.fromBN(quote.tokenMaxB, token_b.decimals).toFixed(token_b.decimals));
+  console.log("devSAMO max input:", DecimalUtil.fromBN(quote.tokenMaxA, token_a.decimals).toFixed(token_a.decimals));
+  console.log("devUSDC max input:", DecimalUtil.fromBN(quote.tokenMaxB, token_b.decimals).toFixed(token_b.decimals));
 
   // トランザクションを作成
   // Metadata 作成を伴う openPositionWithMetadata ではなく openPosition メソッドを使用する

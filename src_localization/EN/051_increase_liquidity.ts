@@ -61,8 +61,8 @@ async function main() {
   });
 
   // Output the estimation
-  console.log("devSAMO max input", DecimalUtil.fromBN(quote.tokenMaxA, token_a.decimals).toFixed(token_a.decimals));
-  console.log("devUSDC max input", DecimalUtil.fromBN(quote.tokenMaxB, token_b.decimals).toFixed(token_b.decimals));
+  console.log("devSAMO max input:", DecimalUtil.fromBN(quote.tokenMaxA, token_a.decimals).toFixed(token_a.decimals));
+  console.log("devUSDC max input:", DecimalUtil.fromBN(quote.tokenMaxB, token_b.decimals).toFixed(token_b.decimals));
 
   // Output the liquidity before transaction execution
   console.log("liquidity(before):", position.getData().liquidity.toString());

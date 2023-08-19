@@ -128,7 +128,7 @@ async function main() {
 
   // Send the transaction
   const signature = await tx_builder.buildAndExecute();
-  console.log("signature", signature);
+  console.log("signature:", signature);
 
   // Wait for the transaction to complete
   const latest_blockhash = await ctx.connection.getLatestBlockhash();
