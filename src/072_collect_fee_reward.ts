@@ -144,7 +144,7 @@ async function main() {
   //LANG:JP トランザクションを送信
   //LANG:EN Send the transaction
   const signature = await tx_builder.buildAndExecute();
-  console.log("signature", signature);
+  console.log("signature:", signature);
 
   //LANG:JP トランザクション完了待ち
   //LANG:EN Wait for the transaction to complete

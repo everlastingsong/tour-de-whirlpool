@@ -61,8 +61,8 @@ async function main() {
   });
 
   // 見積もり結果表示
-  console.log("devSAMO max input", DecimalUtil.fromBN(quote.tokenMaxA, token_a.decimals).toFixed(token_a.decimals));
-  console.log("devUSDC max input", DecimalUtil.fromBN(quote.tokenMaxB, token_b.decimals).toFixed(token_b.decimals));
+  console.log("devSAMO max input:", DecimalUtil.fromBN(quote.tokenMaxA, token_a.decimals).toFixed(token_a.decimals));
+  console.log("devUSDC max input:", DecimalUtil.fromBN(quote.tokenMaxB, token_b.decimals).toFixed(token_b.decimals));
 
   // トランザクション実行前の流動性を表示
   console.log("liquidity(before):", position.getData().liquidity.toString());

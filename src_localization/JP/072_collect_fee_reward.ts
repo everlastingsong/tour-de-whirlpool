@@ -128,7 +128,7 @@ async function main() {
 
   // トランザクションを送信
   const signature = await tx_builder.buildAndExecute();
-  console.log("signature", signature);
+  console.log("signature:", signature);
 
   // トランザクション完了待ち
   const latest_blockhash = await ctx.connection.getLatestBlockhash();

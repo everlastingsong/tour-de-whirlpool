@@ -69,8 +69,8 @@ async function main() {
 
   //LANG:JP 見積もり結果表示
   //LANG:EN Output the estimation
-  console.log("devSAMO min output", DecimalUtil.fromBN(quote.tokenMinA, token_a.decimals).toFixed(token_a.decimals));
-  console.log("devUSDC min output", DecimalUtil.fromBN(quote.tokenMinB, token_b.decimals).toFixed(token_b.decimals));
+  console.log("devSAMO min output:", DecimalUtil.fromBN(quote.tokenMinA, token_a.decimals).toFixed(token_a.decimals));
+  console.log("devUSDC min output:", DecimalUtil.fromBN(quote.tokenMinB, token_b.decimals).toFixed(token_b.decimals));
 
   //LANG:JP トランザクション実行前の流動性を表示
   //LANG:EN Output the liquidity before transaction execution
