@@ -30,7 +30,7 @@ async function main() {
 
   // Whirlpool の Config アカウント
   // devToken ecosystem / Orca Whirlpools
-  const NEBULA_WHIRLPOOLS_CONFIG = new PublicKey("FcrweFY1G9HJAHG5inkGB6pKg1HZ6x9UC2WioAfWrGkR");
+  const DEVNET_WHIRLPOOLS_CONFIG = new PublicKey("FcrweFY1G9HJAHG5inkGB6pKg1HZ6x9UC2WioAfWrGkR");
 
   // 環境変数 WHIRLPOOL_POSITION_BUNDLE から PositionBundle のアドレスを読み込み
   const position_bundle_address = process.env.WHIRLPOOL_POSITION_BUNDLE;
@@ -41,7 +41,7 @@ async function main() {
   const tick_spacing = 64;
   const whirlpool_pubkey = PDAUtil.getWhirlpool(
       ORCA_WHIRLPOOL_PROGRAM_ID,
-      NEBULA_WHIRLPOOLS_CONFIG,
+      DEVNET_WHIRLPOOLS_CONFIG,
       devSAMO.mint, devUSDC.mint, tick_spacing).publicKey;
   console.log("whirlpool_key:", whirlpool_pubkey.toBase58());
   const whirlpool = await client.getPool(whirlpool_pubkey);
