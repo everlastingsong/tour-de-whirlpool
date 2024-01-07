@@ -72,7 +72,7 @@ async function main() {
       "\n  name:", token_def.name,
       "\n  amount:", amount.toString(),
       "\n  ui_amount:", ui_amount.toString()
-    );    
+    );
   }
 }
 
