@@ -66,7 +66,7 @@ async function main() {
   const estimated_compute_units = 300_000; // ~ 1_400_000 CU
   const additional_fee_in_lamports = 10_000; // 0.00001 SOL
 
-  const setComputeUnitPriceIx = ComputeBudgetProgram.setComputeUnitPrice({
+  const set_compute_unit_price_ix = ComputeBudgetProgram.setComputeUnitPrice({
     // プライオリティ・フィーは 1 CU に対して何 micro lamports 追加で支払うか指定する
     microLamports: Math.floor((additional_fee_in_lamports * 1_000_000) / estimated_compute_units),
   });
@@ -79,7 +79,7 @@ async function main() {
   // トランザクションの先頭に命令を追加
   const tx = await whirlpool.swap(quote);
   tx.prependInstruction({
-    instructions: [set_compute_unit_limit_ix, setComputeUnitPriceIx],
+    instructions: [set_compute_unit_limit_ix, set_compute_unit_price_ix],
     cleanupInstructions: [],
     signers: [],
   });
