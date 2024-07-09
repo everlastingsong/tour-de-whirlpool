@@ -2,7 +2,8 @@ import { PublicKey } from "@solana/web3.js";
 import { AnchorProvider } from "@coral-xyz/anchor";
 import {
   WhirlpoolContext, buildWhirlpoolClient, ORCA_WHIRLPOOL_PROGRAM_ID,
-  collectFeesQuote, collectRewardsQuote, TickArrayUtil, PDAUtil, PoolUtil
+  collectFeesQuote, collectRewardsQuote, TickArrayUtil, PDAUtil, PoolUtil,
+  TokenExtensionUtil
 } from "@orca-so/whirlpools-sdk";
 import { DecimalUtil } from "@orca-so/common-sdk";
 import Decimal from "decimal.js";
@@ -55,6 +56,10 @@ async function main() {
   const tick_lower = TickArrayUtil.getTickFromArray(tick_array_lower, position.getData().tickLowerIndex, tick_spacing);
   const tick_upper = TickArrayUtil.getTickFromArray(tick_array_upper, position.getData().tickUpperIndex, tick_spacing);
 
+  //LANG:JP TokenExtensions のトークン情報を取得
+  //LANG:EN Get token info for TokenExtensions
+  const tokenExtensionCtx = await TokenExtensionUtil.buildTokenExtensionContext(ctx.fetcher, whirlpool.getData());
+
   //LANG:JP トレード手数料(フィー)の取得
   //LANG:EN Get trade fee
   const quote_fee = await collectFeesQuote({
@@ -62,6 +67,7 @@ async function main() {
     position: position.getData(),
     tickLower: tick_lower,
     tickUpper: tick_upper,
+    tokenExtensionCtx,
   });
 
   console.log("fee tokenA(devSAMO):", DecimalUtil.adjustDecimals(new Decimal(quote_fee.feeOwedA.toString()), devSAMO.decimals));
@@ -74,9 +80,10 @@ async function main() {
     position: position.getData(),
     tickLower: tick_lower,
     tickUpper: tick_upper,
+    tokenExtensionCtx,
   });
 
-  quote_reward.map((reward, i) => {
+  quote_reward.rewardOwed.map((reward, i) => {
     const reward_info = whirlpool.getData().rewardInfos[i];
 
     if ( PoolUtil.isRewardInitialized(reward_info) ) {

@@ -2,7 +2,8 @@ import { PublicKey } from "@solana/web3.js";
 import { AnchorProvider, BN } from "@coral-xyz/anchor";
 import {
   WhirlpoolContext, buildWhirlpoolClient, ORCA_WHIRLPOOL_PROGRAM_ID,
-  decreaseLiquidityQuoteByLiquidityWithParams
+  decreaseLiquidityQuoteByLiquidityWithParams,
+  TokenExtensionUtil
 } from "@orca-so/whirlpools-sdk";
 import { DecimalUtil, Percentage } from "@orca-so/common-sdk";
 
@@ -54,6 +55,8 @@ async function main() {
     liquidity: delta_liquidity,
     // スリッページ
     slippageTolerance: slippage,
+    // TokenExtensions のトークン情報を取得
+    tokenExtensionCtx: await TokenExtensionUtil.buildTokenExtensionContext(ctx.fetcher, whirlpool_data),
   });
 
   // 見積もり結果表示

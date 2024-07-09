@@ -2,7 +2,8 @@ import { PublicKey } from "@solana/web3.js";
 import { AnchorProvider, BN } from "@coral-xyz/anchor";
 import {
   WhirlpoolContext, buildWhirlpoolClient, ORCA_WHIRLPOOL_PROGRAM_ID,
-  decreaseLiquidityQuoteByLiquidityWithParams
+  decreaseLiquidityQuoteByLiquidityWithParams,
+  TokenExtensionUtil
 } from "@orca-so/whirlpools-sdk";
 import { DecimalUtil, Percentage } from "@orca-so/common-sdk";
 
@@ -65,6 +66,9 @@ async function main() {
     //LANG:JP スリッページ
     //LANG:EN Acceptable slippage
     slippageTolerance: slippage,
+    //LANG:JP TokenExtensions のトークン情報を取得
+    //LANG:EN Get token info for TokenExtensions
+    tokenExtensionCtx: await TokenExtensionUtil.buildTokenExtensionContext(ctx.fetcher, whirlpool_data),
   });
 
   //LANG:JP 見積もり結果表示

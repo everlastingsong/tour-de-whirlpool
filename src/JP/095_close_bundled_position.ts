@@ -2,7 +2,8 @@ import { PublicKey } from "@solana/web3.js";
 import { AnchorProvider } from "@coral-xyz/anchor";
 import {
   WhirlpoolContext, buildWhirlpoolClient, ORCA_WHIRLPOOL_PROGRAM_ID,
-  PDAUtil, IGNORE_CACHE, PositionBundleUtil, decreaseLiquidityQuoteByLiquidityWithParams, PositionBundleData, WhirlpoolClient, PoolUtil, WhirlpoolIx
+  PDAUtil, IGNORE_CACHE, PositionBundleUtil, decreaseLiquidityQuoteByLiquidityWithParams, PositionBundleData, WhirlpoolClient, PoolUtil, WhirlpoolIx,
+  TokenExtensionUtil
 } from "@orca-so/whirlpools-sdk";
 import { DecimalUtil, EMPTY_INSTRUCTION, Instruction, Percentage, TransactionBuilder, resolveOrCreateATA } from "@orca-so/common-sdk";
 import { BN } from "bn.js";
@@ -121,6 +122,7 @@ async function close_bundled_position(client: WhirlpoolClient, position_bundle_p
     tickUpperIndex: position.getData().tickUpperIndex,
     liquidity: position.getData().liquidity,
     slippageTolerance: slippage,
+    tokenExtensionCtx: await TokenExtensionUtil.buildTokenExtensionContext(ctx.fetcher, whirlpool_data),
   });
 
   // 見積もり結果表示
