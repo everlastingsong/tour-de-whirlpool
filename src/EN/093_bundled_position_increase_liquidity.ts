@@ -2,7 +2,8 @@ import { PublicKey } from "@solana/web3.js";
 import { AnchorProvider } from "@coral-xyz/anchor";
 import {
   WhirlpoolContext, buildWhirlpoolClient, ORCA_WHIRLPOOL_PROGRAM_ID,
-  PDAUtil, increaseLiquidityQuoteByInputTokenWithParams, IGNORE_CACHE, PositionBundleUtil
+  PDAUtil, increaseLiquidityQuoteByInputTokenWithParams, IGNORE_CACHE, PositionBundleUtil,
+  TokenExtensionUtil
 } from "@orca-so/whirlpools-sdk";
 import { DecimalUtil, Percentage, TransactionBuilder } from "@orca-so/common-sdk";
 import Decimal from "decimal.js";
@@ -70,6 +71,7 @@ async function main() {
     inputTokenMint: devUSDC.mint,
     inputTokenAmount: dev_usdc_amount_one,
     slippageTolerance: slippage,
+    tokenExtensionCtx: await TokenExtensionUtil.buildTokenExtensionContext(ctx.fetcher, whirlpool_data_one),
   });
 
   const whirlpool_data_two = whirlpool_two.getData();
@@ -85,6 +87,7 @@ async function main() {
     inputTokenMint: devUSDC.mint,
     inputTokenAmount: dev_usdc_amount_two,
     slippageTolerance: slippage,
+    tokenExtensionCtx: await TokenExtensionUtil.buildTokenExtensionContext(ctx.fetcher, whirlpool_data_two),
   });
 
   // Output the estimation

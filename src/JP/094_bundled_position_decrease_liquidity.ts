@@ -2,7 +2,8 @@ import { PublicKey } from "@solana/web3.js";
 import { AnchorProvider } from "@coral-xyz/anchor";
 import {
   WhirlpoolContext, buildWhirlpoolClient, ORCA_WHIRLPOOL_PROGRAM_ID,
-  PDAUtil, IGNORE_CACHE, PositionBundleUtil, decreaseLiquidityQuoteByLiquidityWithParams
+  PDAUtil, IGNORE_CACHE, PositionBundleUtil, decreaseLiquidityQuoteByLiquidityWithParams,
+  TokenExtensionUtil
 } from "@orca-so/whirlpools-sdk";
 import { DecimalUtil, Percentage, TransactionBuilder } from "@orca-so/common-sdk";
 import { BN } from "bn.js";
@@ -76,6 +77,7 @@ async function main() {
     tickUpperIndex: position_one.getData().tickUpperIndex,
     liquidity: delta_liquidity_one,
     slippageTolerance: slippage,
+    tokenExtensionCtx: await TokenExtensionUtil.buildTokenExtensionContext(ctx.fetcher, whirlpool_data_one),
   });
 
   const whirlpool_data_two = whirlpool_two.getData();
@@ -88,6 +90,7 @@ async function main() {
     tickUpperIndex: position_two.getData().tickUpperIndex,
     liquidity: delta_liquidity_two,
     slippageTolerance: slippage,
+    tokenExtensionCtx: await TokenExtensionUtil.buildTokenExtensionContext(ctx.fetcher, whirlpool_data_two),
   });
 
   // 見積もり結果表示
