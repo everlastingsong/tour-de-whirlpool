@@ -1,5 +1,5 @@
 import { Keypair, Connection, SystemProgram, PublicKey, Transaction } from "@solana/web3.js";
-import secret from "../wallet.json";
+import secret from "../../wallet.json";
 
 const RPC_ENDPOINT_URL = "https://api.devnet.solana.com";
 const COMMITMENT = 'confirmed';
@@ -35,7 +35,7 @@ async function main() {
 
   // トランザクション完了待ち
   const latest_blockhash = await connection.getLatestBlockhash();
-  await connection.confirmTransaction({signature, ...latest_blockhash});
+  await connection.confirmTransaction({ signature, ...latest_blockhash });
 }
 
 main();

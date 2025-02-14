@@ -1,4 +1,4 @@
-import { PublicKey } from "@solana/web3.js";
+import { Connection, PublicKey } from "@solana/web3.js";
 import { AnchorProvider } from "@coral-xyz/anchor";
 import { DecimalUtil, Percentage } from "@orca-so/common-sdk";
 import {
@@ -23,8 +23,8 @@ async function main() {
   // Token definition
   // devToken specification
   // https://everlastingsong.github.io/nebula/
-  const devUSDC = {mint: new PublicKey("BRjpCHtyQLNCo8gqRUr8jtdAj5AjPYQaoqbvcZiHok1k"), decimals: 6};
-  const devSAMO = {mint: new PublicKey("Jd4M8bfJG3sAkd82RsGWyEXoaBXQP7njFzBwEaCTuDa"), decimals: 9};
+  const devUSDC = { mint: new PublicKey("BRjpCHtyQLNCo8gqRUr8jtdAj5AjPYQaoqbvcZiHok1k"), decimals: 6 };
+  const devSAMO = { mint: new PublicKey("Jd4M8bfJG3sAkd82RsGWyEXoaBXQP7njFzBwEaCTuDa"), decimals: 9 };
 
   // WhirlpoolsConfig account
   // devToken ecosystem / Orca Whirlpools
@@ -35,9 +35,9 @@ async function main() {
   // mint address of the 2nd token, tick spacing), similar to the 5 column compound primary key in DB
   const tick_spacing = 64;
   const whirlpool_pubkey = PDAUtil.getWhirlpool(
-      ORCA_WHIRLPOOL_PROGRAM_ID,
-      DEVNET_WHIRLPOOLS_CONFIG,
-      devSAMO.mint, devUSDC.mint, tick_spacing).publicKey;
+    ORCA_WHIRLPOOL_PROGRAM_ID,
+    DEVNET_WHIRLPOOLS_CONFIG,
+    devSAMO.mint, devUSDC.mint, tick_spacing).publicKey;
   console.log("whirlpool_key:", whirlpool_pubkey.toBase58());
   const whirlpool = await client.getPool(whirlpool_pubkey);
 
@@ -68,8 +68,30 @@ async function main() {
   console.log("signature:", signature);
 
   // Wait for the transaction to complete
-  const latest_blockhash = await ctx.connection.getLatestBlockhash();
-  await ctx.connection.confirmTransaction({signature, ...latest_blockhash}, "confirmed");
+  await confirmTransaction(ctx.connection, signature);
+}
+
+async function confirmTransaction(connection: Connection, signature: string) {
+  const timeoutMs = 90000;
+  const startTime = Date.now();
+  while (Date.now() - startTime < timeoutMs) {
+    const transactionStartTime = Date.now();
+
+    const statuses = await connection.getSignatureStatuses([signature]);
+    if (statuses && statuses.value[0]) {
+      if (!statuses.value[0].err) {
+        console.log("Transaction confirmed");
+        return
+      }
+    }
+
+    const elapsedTime = Date.now() - transactionStartTime;
+    const remainingTime = Math.max(0, 1000 - elapsedTime);
+    if (remainingTime > 0) {
+      await new Promise((resolve) => setTimeout(resolve, remainingTime));
+    }
+  }
+  throw new Error("Transacton not confirmed");
 }
 
 main();

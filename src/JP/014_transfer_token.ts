@@ -1,7 +1,7 @@
 import { Keypair, Connection, PublicKey, Transaction } from "@solana/web3.js";
 import { TOKEN_PROGRAM_ID, AccountLayout, getAssociatedTokenAddressSync, createTransferCheckedInstruction } from "@solana/spl-token";
 import { resolveOrCreateATA, ZERO } from "@orca-so/common-sdk";
-import secret from "../wallet.json";
+import secret from "../../wallet.json";
 
 const RPC_ENDPOINT_URL = "https://api.devnet.solana.com";
 const COMMITMENT = 'confirmed';
@@ -28,11 +28,11 @@ async function main() {
   const src_token_account = getAssociatedTokenAddressSync(DEV_SAMO_MINT, keypair.publicKey);
 
   // 送信先のトークンアカウント取得 (トークンアカウントが存在しない場合は create_ata_ix に作成用の命令が入る)
-  const {address: dest_token_account, ...create_ata_ix} = await resolveOrCreateATA(
+  const { address: dest_token_account, ...create_ata_ix } = await resolveOrCreateATA(
     connection,
     dest_pubkey,
     DEV_SAMO_MINT,
-    ()=>connection.getMinimumBalanceForRentExemption(AccountLayout.span),
+    () => connection.getMinimumBalanceForRentExemption(AccountLayout.span),
     ZERO,
     keypair.publicKey
   );
@@ -63,7 +63,7 @@ async function main() {
 
   // トランザクション完了待ち
   const latest_blockhash = await connection.getLatestBlockhash();
-  await connection.confirmTransaction({signature, ...latest_blockhash});
+  await connection.confirmTransaction({ signature, ...latest_blockhash });
 }
 
 main();

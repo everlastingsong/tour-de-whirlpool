@@ -7,6 +7,7 @@ import {
 } from "@orca-so/whirlpools-sdk";
 import { DecimalUtil, Percentage } from "@orca-so/common-sdk";
 import Decimal from "decimal.js";
+import { TOKEN_2022_PROGRAM_ID } from "@solana/spl-token";
 
 // Environment variables must be defined before script execution
 // ANCHOR_PROVIDER_URL=https://api.devnet.solana.com
@@ -24,8 +25,8 @@ async function main() {
   // Token definition
   // devToken specification
   // https://everlastingsong.github.io/nebula/
-  const devUSDC = {mint: new PublicKey("BRjpCHtyQLNCo8gqRUr8jtdAj5AjPYQaoqbvcZiHok1k"), decimals: 6};
-  const devSAMO = {mint: new PublicKey("Jd4M8bfJG3sAkd82RsGWyEXoaBXQP7njFzBwEaCTuDa"), decimals: 9};
+  const devUSDC = { mint: new PublicKey("BRjpCHtyQLNCo8gqRUr8jtdAj5AjPYQaoqbvcZiHok1k"), decimals: 6 };
+  const devSAMO = { mint: new PublicKey("Jd4M8bfJG3sAkd82RsGWyEXoaBXQP7njFzBwEaCTuDa"), decimals: 9 };
 
   // WhirlpoolsConfig account
   // devToken ecosystem / Orca Whirlpools
@@ -34,9 +35,9 @@ async function main() {
   // Get devSAMO/devUSDC whirlpool
   const tick_spacing = 64;
   const whirlpool_pubkey = PDAUtil.getWhirlpool(
-      ORCA_WHIRLPOOL_PROGRAM_ID,
-      DEVNET_WHIRLPOOLS_CONFIG,
-      devSAMO.mint, devUSDC.mint, tick_spacing).publicKey;
+    ORCA_WHIRLPOOL_PROGRAM_ID,
+    DEVNET_WHIRLPOOLS_CONFIG,
+    devSAMO.mint, devUSDC.mint, tick_spacing).publicKey;
   console.log("whirlpool_key:", whirlpool_pubkey.toBase58());
   const whirlpool = await client.getPool(whirlpool_pubkey);
 
@@ -91,7 +92,11 @@ async function main() {
   const open_position_tx = await whirlpool.openPositionWithMetadata(
     lower_tick_index,
     upper_tick_index,
-    quote
+    quote,
+    undefined, // wallet provided with WhirlpoolContext
+    undefined, // funder == wallet
+    undefined, // let positionMint be auto-generated
+    TOKEN_2022_PROGRAM_ID
   );
 
   // Send the transaction
@@ -101,7 +106,7 @@ async function main() {
 
   // Wait for the transaction to complete
   const latest_blockhash = await ctx.connection.getLatestBlockhash();
-  await ctx.connection.confirmTransaction({signature, ...latest_blockhash}, "confirmed");
+  await ctx.connection.confirmTransaction({ signature, ...latest_blockhash }, "confirmed");
 }
 
 main();

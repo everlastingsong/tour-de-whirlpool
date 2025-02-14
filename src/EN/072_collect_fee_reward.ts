@@ -31,7 +31,14 @@ async function main() {
   // Get the position and the pool to which the position belongs
   const position = await client.getPosition(position_pubkey);
   const position_owner = ctx.wallet.publicKey;
-  const position_token_account = getAssociatedTokenAddressSync(position.getData().positionMint, position_owner);
+  const position_mint = position.getData().positionMint;
+  const position_mint_program_id = position.getPositionMintTokenProgramId();
+  const position_token_account = getAssociatedTokenAddressSync(
+    position_mint,
+    position_owner,
+    false,
+    position_mint_program_id
+  );
   const whirlpool_pubkey = position.getData().whirlpool;
   const whirlpool = await client.getPool(whirlpool_pubkey);
   const token_a = whirlpool.getTokenAInfo();
@@ -48,17 +55,17 @@ async function main() {
   tokens_to_be_collected.add(token_a.mint.toBase58());
   tokens_to_be_collected.add(token_b.mint.toBase58());
   whirlpool.getData().rewardInfos.map((reward_info) => {
-    if ( PoolUtil.isRewardInitialized(reward_info) ) {
+    if (PoolUtil.isRewardInitialized(reward_info)) {
       tokens_to_be_collected.add(reward_info.mint.toBase58());
     }
   });
   // Get addresses of token accounts and get instructions to create if it does not exist
   const required_ta_ix: Instruction[] = [];
   const token_account_map = new Map<string, PublicKey>();
-  for ( let mint_b58 of tokens_to_be_collected ) {
+  for (let mint_b58 of tokens_to_be_collected) {
     const mint = new PublicKey(mint_b58);
     // If present, ix is EMPTY_INSTRUCTION
-    const {address, ...ix} = await resolveOrCreateATA(
+    const { address, ...ix } = await resolveOrCreateATA(
       ctx.connection,
       position_owner,
       mint,
@@ -78,7 +85,7 @@ async function main() {
       tickArrayUpper: tick_array_upper_pubkey,
     }
   );
-  
+
   // Build the instruction to collect fees
   let collect_fees_ix = WhirlpoolIx.collectFeesIx(
     ctx.program,
@@ -89,16 +96,16 @@ async function main() {
       positionTokenAccount: position_token_account,
       tokenOwnerAccountA: token_account_map.get(token_a.mint.toBase58()),
       tokenOwnerAccountB: token_account_map.get(token_b.mint.toBase58()),
-      tokenVaultA: whirlpool.getData().tokenVaultA, 
+      tokenVaultA: whirlpool.getData().tokenVaultA,
       tokenVaultB: whirlpool.getData().tokenVaultB,
     }
   );
 
   // Build the instructions to collect rewards
   const collect_reward_ix = [EMPTY_INSTRUCTION, EMPTY_INSTRUCTION, EMPTY_INSTRUCTION];
-  for (let i=0; i<whirlpool.getData().rewardInfos.length; i++) {
+  for (let i = 0; i < whirlpool.getData().rewardInfos.length; i++) {
     const reward_info = whirlpool.getData().rewardInfos[i];
-    if ( !PoolUtil.isRewardInitialized(reward_info) ) continue;
+    if (!PoolUtil.isRewardInitialized(reward_info)) continue;
 
     collect_reward_ix[i] = WhirlpoolIx.collectRewardIx(
       ctx.program,
@@ -132,7 +139,7 @@ async function main() {
 
   // Wait for the transaction to complete
   const latest_blockhash = await ctx.connection.getLatestBlockhash();
-  await ctx.connection.confirmTransaction({signature, ...latest_blockhash}, "confirmed");
+  await ctx.connection.confirmTransaction({ signature, ...latest_blockhash }, "confirmed");
 }
 
 main();
