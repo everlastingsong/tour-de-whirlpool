@@ -1,10 +1,9 @@
 import { AnchorProvider, BN } from "@coral-xyz/anchor";
 import {
   WhirlpoolContext, buildWhirlpoolClient, ORCA_WHIRLPOOL_PROGRAM_ID,
-  PDAUtil, PriceMath, PoolUtil, IGNORE_CACHE
+  PDAUtil, IGNORE_CACHE
 } from "@orca-so/whirlpools-sdk";
 import { TOKEN_2022_PROGRAM_ID, TOKEN_PROGRAM_ID, unpackAccount } from "@solana/spl-token";
-import { DecimalUtil } from "@orca-so/common-sdk";
 
 // スクリプト実行前に環境変数定義が必要です
 // ANCHOR_PROVIDER_URL=https://api.devnet.solana.com

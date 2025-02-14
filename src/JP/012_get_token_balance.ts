@@ -18,10 +18,10 @@ async function main() {
   // https://everlastingsong.github.io/nebula/
   // devToken specification
   const token_defs = {
-    "BRjpCHtyQLNCo8gqRUr8jtdAj5AjPYQaoqbvcZiHok1k": { name: "devUSDC", decimals: 6 },
-    "H8UekPGwePSmQ3ttuYGPU1szyFfjZR4N53rymSFwpLPm": { name: "devUSDT", decimals: 6 },
-    "Jd4M8bfJG3sAkd82RsGWyEXoaBXQP7njFzBwEaCTuDa": { name: "devSAMO", decimals: 9 },
-    "Afn8YB1p4NsoZeS5XJBZ18LTfEy5NFPwN46wapZcBQr6": { name: "devTMAC", decimals: 6 },
+    "BRjpCHtyQLNCo8gqRUr8jtdAj5AjPYQaoqbvcZiHok1k": {name: "devUSDC", decimals: 6},
+    "H8UekPGwePSmQ3ttuYGPU1szyFfjZR4N53rymSFwpLPm": {name: "devUSDT", decimals: 6},
+    "Jd4M8bfJG3sAkd82RsGWyEXoaBXQP7njFzBwEaCTuDa":  {name: "devSAMO", decimals: 9},
+    "Afn8YB1p4NsoZeS5XJBZ18LTfEy5NFPwN46wapZcBQr6": {name: "devTMAC", decimals: 6},
   };
 
   // ウォレットの公開鍵からトークンアカウントを取得
@@ -42,7 +42,7 @@ async function main() {
   console.log("getTokenAccountsByOwner:", accounts);
 
   // トークンアカウントのデータをデコード
-  for (let i = 0; i < accounts.value.length; i++) {
+  for (let i=0; i<accounts.value.length; i++) {
     const value = accounts.value[i];
 
     // デコード
@@ -51,7 +51,7 @@ async function main() {
     const mint = parsed_token_account.mint;
     const token_def = token_defs[mint.toBase58()];
     // devToken 以外は無視
-    if (token_def === undefined) continue;
+    if ( token_def === undefined ) continue;
 
     // 残高は amount
     const amount = parsed_token_account.amount;

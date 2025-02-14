@@ -5,7 +5,8 @@ import {
   PDAUtil, PoolUtil, WhirlpoolIx
 } from "@orca-so/whirlpools-sdk";
 import {
-  Instruction, EMPTY_INSTRUCTION, resolveOrCreateATA, TransactionBuilder
+  Instruction, EMPTY_INSTRUCTION, resolveOrCreateATA,
+  TransactionBuilder
 } from "@orca-so/common-sdk";
 import { getAssociatedTokenAddressSync } from "@solana/spl-token";
 
@@ -33,12 +34,7 @@ async function main() {
   const position_owner = ctx.wallet.publicKey;
   const position_mint = position.getData().positionMint;
   const position_mint_program_id = position.getPositionMintTokenProgramId();
-  const position_token_account = getAssociatedTokenAddressSync(
-    position_mint,
-    position_owner,
-    false,
-    position_mint_program_id
-  );
+  const position_token_account = getAssociatedTokenAddressSync(position_mint, position_owner, false, position_mint_program_id);
   const whirlpool_pubkey = position.getData().whirlpool;
   const whirlpool = await client.getPool(whirlpool_pubkey);
   const token_a = whirlpool.getTokenAInfo();

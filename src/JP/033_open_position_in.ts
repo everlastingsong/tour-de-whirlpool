@@ -92,9 +92,12 @@ async function main() {
     lower_tick_index,
     upper_tick_index,
     quote,
-    undefined, // WhirlpoolContext で提供されるウォレット
-    undefined, // 資金提供者 == ウォレット
-    undefined, // positionMintを自動生成する
+    // WhirlpoolContext で提供されるウォレット
+    undefined,
+    // 資金提供者 == ウォレット
+    undefined,
+    // positionMintを自動生成する
+    undefined,
     TOKEN_2022_PROGRAM_ID
   );
 

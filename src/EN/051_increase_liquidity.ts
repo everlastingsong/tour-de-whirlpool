@@ -25,8 +25,8 @@ async function main() {
   // Token definition
   // devToken specification
   // https://everlastingsong.github.io/nebula/
-  const devUSDC = {mint: new PublicKey("BRjpCHtyQLNCo8gqRUr8jtdAj5AjPYQaoqbvcZiHok1k"), decimals: 6};
-  const devSAMO = {mint: new PublicKey("Jd4M8bfJG3sAkd82RsGWyEXoaBXQP7njFzBwEaCTuDa"), decimals: 9};
+  const devUSDC = { mint: new PublicKey("BRjpCHtyQLNCo8gqRUr8jtdAj5AjPYQaoqbvcZiHok1k"), decimals: 6 };
+  const devSAMO = { mint: new PublicKey("Jd4M8bfJG3sAkd82RsGWyEXoaBXQP7njFzBwEaCTuDa"), decimals: 9 };
 
   // Retrieve the position address from the WHIRLPOOL_POSITION environment variable
   const position_address = process.env.WHIRLPOOL_POSITION;
@@ -79,7 +79,7 @@ async function main() {
 
   // Wait for the transaction to complete
   const latest_blockhash = await ctx.connection.getLatestBlockhash();
-  await ctx.connection.confirmTransaction({signature, ...latest_blockhash}, "confirmed");
+  await ctx.connection.confirmTransaction({ signature, ...latest_blockhash }, "confirmed");
 
   // Output the liquidity after transaction execution
   console.log("liquidity(after):", (await position.refreshData()).liquidity.toString());

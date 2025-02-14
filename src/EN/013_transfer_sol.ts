@@ -1,10 +1,6 @@
 import {
-  Keypair,
-  Connection,
-  SystemProgram,
-  PublicKey,
-  TransactionMessage,
-  VersionedTransaction
+  Keypair, Connection, SystemProgram,
+  PublicKey, TransactionMessage, VersionedTransaction
 } from "@solana/web3.js";
 import secret from "../../wallet.json";
 
@@ -46,7 +42,7 @@ async function main() {
 
   // Wait for the transaction to complete
   const latest_blockhash = await connection.getLatestBlockhash();
-  await connection.confirmTransaction({ signature, ...latest_blockhash }, "confirmed");
+  await connection.confirmTransaction({ signature, ...latest_blockhash });
 }
 
 main();

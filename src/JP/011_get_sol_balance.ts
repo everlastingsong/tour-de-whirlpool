@@ -23,7 +23,7 @@ async function main() {
   // SOL 残高表示
   // lamports 単位の整数で内部管理されているため SOL 単位にするには 10^9 で割る (1 SOL = 10^9 lamports)
   console.log("lamports:", sol_balance);
-  console.log("SOL:", sol_balance / 10 ** 9);
+  console.log("SOL:", sol_balance / 10**9);
 }
 
 main();

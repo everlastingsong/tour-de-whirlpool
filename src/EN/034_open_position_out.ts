@@ -93,9 +93,12 @@ async function main() {
     lower_tick_index,
     upper_tick_index,
     quote,
-    undefined, // wallet provided with WhirlpoolContext
-    undefined, // funder == wallet
-    undefined, // let positionMint be auto-generated
+    // wallet provided with WhirlpoolContext
+    undefined,
+    // funder == wallet
+    undefined,
+    // let positionMint be auto-generated
+    undefined,
     TOKEN_2022_PROGRAM_ID
   );
 

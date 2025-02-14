@@ -25,8 +25,8 @@ async function main() {
   // トークン定義
   // devToken specification
   // https://everlastingsong.github.io/nebula/
-  const devUSDC = {mint: new PublicKey("BRjpCHtyQLNCo8gqRUr8jtdAj5AjPYQaoqbvcZiHok1k"), decimals: 6};
-  const devSAMO = {mint: new PublicKey("Jd4M8bfJG3sAkd82RsGWyEXoaBXQP7njFzBwEaCTuDa"), decimals: 9};
+  const devUSDC = { mint: new PublicKey("BRjpCHtyQLNCo8gqRUr8jtdAj5AjPYQaoqbvcZiHok1k"), decimals: 6 };
+  const devSAMO = { mint: new PublicKey("Jd4M8bfJG3sAkd82RsGWyEXoaBXQP7njFzBwEaCTuDa"), decimals: 9 };
 
   // 環境変数 WHIRLPOOL_POSITION からポジションのアドレスを読み込み
   const position_address = process.env.WHIRLPOOL_POSITION;
@@ -79,7 +79,7 @@ async function main() {
 
   // トランザクション完了待ち
   const latest_blockhash = await ctx.connection.getLatestBlockhash();
-  await ctx.connection.confirmTransaction({signature, ...latest_blockhash}, "confirmed");
+  await ctx.connection.confirmTransaction({ signature, ...latest_blockhash }, "confirmed");
 
   // トランザクション実行後の流動性を表示
   console.log("liquidity(after):", (await position.refreshData()).liquidity.toString());

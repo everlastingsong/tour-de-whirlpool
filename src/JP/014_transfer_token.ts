@@ -1,5 +1,11 @@
-import { Keypair, Connection, PublicKey, Transaction } from "@solana/web3.js";
-import { TOKEN_PROGRAM_ID, AccountLayout, getAssociatedTokenAddressSync, createTransferCheckedInstruction } from "@solana/spl-token";
+import {
+  Keypair, Connection, PublicKey,
+  TransactionMessage, VersionedTransaction
+} from "@solana/web3.js";
+import {
+  TOKEN_PROGRAM_ID, AccountLayout, getAssociatedTokenAddressSync,
+  createTransferCheckedInstruction
+} from "@solana/spl-token";
 import { resolveOrCreateATA, ZERO } from "@orca-so/common-sdk";
 import secret from "../../wallet.json";
 
@@ -50,15 +56,17 @@ async function main() {
   );
 
   // トランザクションを作成し、命令を追加
-  const tx = new Transaction();
-  // 送り先のトークンアカウントを作成(必要時)
-  create_ata_ix.instructions.map((ix) => tx.add(ix));
-  // devSAMOを送る
-  tx.add(transfer_ix);
+  const messageV0 = new TransactionMessage({
+    payerKey: keypair.publicKey,
+    recentBlockhash: (await connection.getLatestBlockhash()).blockhash,
+    // 送り先のトークンアカウントを作成(必要時)
+    instructions: [...create_ata_ix.instructions, transfer_ix],
+  }).compileToV0Message();
+  const tx = new VersionedTransaction(messageV0);
+  tx.sign([keypair]);
 
   // トランザクションを送信
-  const signers = [keypair];
-  const signature = await connection.sendTransaction(tx, signers);
+  const signature = await connection.sendTransaction(tx);
   console.log("signature:", signature);
 
   // トランザクション完了待ち

@@ -1,15 +1,7 @@
 import { PublicKey } from "@solana/web3.js";
 import { AnchorProvider } from "@coral-xyz/anchor";
-import {
-  WhirlpoolContext, buildWhirlpoolClient, ORCA_WHIRLPOOL_PROGRAM_ID,
-  PDAUtil, PoolUtil, WhirlpoolIx, decreaseLiquidityQuoteByLiquidityWithParams,
-  TokenExtensionUtil
-} from "@orca-so/whirlpools-sdk";
-import {
-  Instruction, EMPTY_INSTRUCTION, resolveOrCreateATA, TransactionBuilder, Percentage,
-  DecimalUtil
-} from "@orca-so/common-sdk";
-import { getAssociatedTokenAddressSync } from "@solana/spl-token";
+import { WhirlpoolContext, buildWhirlpoolClient, ORCA_WHIRLPOOL_PROGRAM_ID } from "@orca-so/whirlpools-sdk";
+import { Percentage } from "@orca-so/common-sdk";
 
 // Environment variables must be defined before script execution
 // ANCHOR_PROVIDER_URL=https://api.devnet.solana.com
@@ -39,7 +31,7 @@ async function main() {
   const whirlpool = await client.getPool(whirlpool_pubkey);
   const close_position_tx = await whirlpool.closePosition(position_pubkey, slippage);
 
-  // Send the transactions
+  // Send the transaction
   for (const tx of close_position_tx) {
     const signature = await tx.buildAndExecute();
     console.log("signature:", signature);

@@ -6,7 +6,7 @@ LANG_LIST="JP EN"
 
 for lang in $LANG_LIST
 do
-    echo "target languaage: $lang"
+    echo "target language: $lang"
 
     # make grep -v filter
     filter=""
@@ -30,6 +30,6 @@ do
     for f in $(ls $SRC_DIR)
     do
         echo "  generate: $TARGET_DIR/$lang/$f"
-        grep -v -E $filter $SRC_DIR/$f | sed $command > $TARGET_DIR/$lang/$f
+        grep -v -E $filter $SRC_DIR/$f | sed -e "$command" -e 's|import secret from "\.\./wallet.json"|import secret from "\.\./\.\./wallet.json"|g' > $TARGET_DIR/$lang/$f
     done
 done

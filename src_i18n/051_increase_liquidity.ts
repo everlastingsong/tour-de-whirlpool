@@ -28,8 +28,8 @@ async function main() {
   //LANG:EN Token definition
   // devToken specification
   // https://everlastingsong.github.io/nebula/
-  const devUSDC = {mint: new PublicKey("BRjpCHtyQLNCo8gqRUr8jtdAj5AjPYQaoqbvcZiHok1k"), decimals: 6};
-  const devSAMO = {mint: new PublicKey("Jd4M8bfJG3sAkd82RsGWyEXoaBXQP7njFzBwEaCTuDa"), decimals: 9};
+  const devUSDC = { mint: new PublicKey("BRjpCHtyQLNCo8gqRUr8jtdAj5AjPYQaoqbvcZiHok1k"), decimals: 6 };
+  const devSAMO = { mint: new PublicKey("Jd4M8bfJG3sAkd82RsGWyEXoaBXQP7njFzBwEaCTuDa"), decimals: 9 };
 
   //LANG:JP 環境変数 WHIRLPOOL_POSITION からポジションのアドレスを読み込み
   //LANG:EN Retrieve the position address from the WHIRLPOOL_POSITION environment variable
@@ -96,7 +96,7 @@ async function main() {
   //LANG:JP トランザクション完了待ち
   //LANG:EN Wait for the transaction to complete
   const latest_blockhash = await ctx.connection.getLatestBlockhash();
-  await ctx.connection.confirmTransaction({signature, ...latest_blockhash}, "confirmed");
+  await ctx.connection.confirmTransaction({ signature, ...latest_blockhash }, "confirmed");
 
   //LANG:JP トランザクション実行後の流動性を表示
   //LANG:EN Output the liquidity after transaction execution

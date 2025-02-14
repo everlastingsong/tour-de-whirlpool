@@ -2,8 +2,8 @@ import { PublicKey } from "@solana/web3.js";
 import { AnchorProvider } from "@coral-xyz/anchor";
 import {
   WhirlpoolContext, buildWhirlpoolClient, ORCA_WHIRLPOOL_PROGRAM_ID,
-  collectFeesQuote, collectRewardsQuote, TickArrayUtil, PDAUtil, PoolUtil,
-  TokenExtensionUtil
+  collectFeesQuote, collectRewardsQuote, TickArrayUtil,
+  PDAUtil, PoolUtil, TokenExtensionUtil
 } from "@orca-so/whirlpools-sdk";
 import { DecimalUtil } from "@orca-so/common-sdk";
 import Decimal from "decimal.js";
@@ -25,10 +25,10 @@ async function main() {
   // トークン定義
   // devToken specification
   // https://everlastingsong.github.io/nebula/
-  const devUSDC = {name: "devUSDC", mint: new PublicKey("BRjpCHtyQLNCo8gqRUr8jtdAj5AjPYQaoqbvcZiHok1k"), decimals: 6};
-  const devSAMO = {name: "devSAMO", mint: new PublicKey("Jd4M8bfJG3sAkd82RsGWyEXoaBXQP7njFzBwEaCTuDa"), decimals: 9};
-  const devTMAC = {name: "devTMAC", mint: new PublicKey("Afn8YB1p4NsoZeS5XJBZ18LTfEy5NFPwN46wapZcBQr6"), decimals: 6};
-  const token_map = new Map<String, {name: string, mint: PublicKey, decimals: number}>();
+  const devUSDC = { name: "devUSDC", mint: new PublicKey("BRjpCHtyQLNCo8gqRUr8jtdAj5AjPYQaoqbvcZiHok1k"), decimals: 6 };
+  const devSAMO = { name: "devSAMO", mint: new PublicKey("Jd4M8bfJG3sAkd82RsGWyEXoaBXQP7njFzBwEaCTuDa"), decimals: 9 };
+  const devTMAC = { name: "devTMAC", mint: new PublicKey("Afn8YB1p4NsoZeS5XJBZ18LTfEy5NFPwN46wapZcBQr6"), decimals: 6 };
+  const token_map = new Map<String, { name: string, mint: PublicKey, decimals: number }>();
   [devUSDC, devSAMO, devTMAC].map((token) => token_map.set(token.mint.toBase58(), token));
 
   // 環境変数 WHIRLPOOL_POSITION からポジションのアドレスを読み込み
@@ -77,7 +77,7 @@ async function main() {
   quote_reward.rewardOwed.map((reward, i) => {
     const reward_info = whirlpool.getData().rewardInfos[i];
 
-    if ( PoolUtil.isRewardInitialized(reward_info) ) {
+    if (PoolUtil.isRewardInitialized(reward_info)) {
       const token = token_map.get(reward_info.mint.toBase58());
       console.log(
         `reward[${i}]:`,
@@ -88,7 +88,7 @@ async function main() {
     else {
       console.log(`reward[${i}]: NOT INITIALIZED`);
     }
-  }); 
+  });
 }
 
 main();

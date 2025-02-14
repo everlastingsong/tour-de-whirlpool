@@ -1,13 +1,9 @@
 import { AnchorProvider, BN } from "@coral-xyz/anchor";
 import {
-  WhirlpoolContext,
-  buildWhirlpoolClient,
-  ORCA_WHIRLPOOL_PROGRAM_ID,
-  PDAUtil,
-  IGNORE_CACHE
+  WhirlpoolContext, buildWhirlpoolClient, ORCA_WHIRLPOOL_PROGRAM_ID,
+  PDAUtil, IGNORE_CACHE
 } from "@orca-so/whirlpools-sdk";
 import { TOKEN_2022_PROGRAM_ID, TOKEN_PROGRAM_ID, unpackAccount } from "@solana/spl-token";
-import { GetProgramAccountsConfig, GetProgramAccountsResponse } from "@solana/web3.js";
 
 // Environment variables must be defined before script execution
 // ANCHOR_PROVIDER_URL=https://api.devnet.solana.com

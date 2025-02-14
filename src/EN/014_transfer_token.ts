@@ -1,14 +1,9 @@
 import {
-  Keypair,
-  Connection,
-  PublicKey,
-  TransactionMessage,
-  VersionedTransaction
+  Keypair, Connection, PublicKey,
+  TransactionMessage, VersionedTransaction
 } from "@solana/web3.js";
 import {
-  TOKEN_PROGRAM_ID,
-  AccountLayout,
-  getAssociatedTokenAddressSync,
+  TOKEN_PROGRAM_ID, AccountLayout, getAssociatedTokenAddressSync,
   createTransferCheckedInstruction
 } from "@solana/spl-token";
 import { resolveOrCreateATA, ZERO } from "@orca-so/common-sdk";
@@ -60,11 +55,12 @@ async function main() {
     TOKEN_PROGRAM_ID
   );
 
-  // Create a transaction and add the instruction
+  // Create the transaction and add the instruction
   const messageV0 = new TransactionMessage({
     payerKey: keypair.publicKey,
     recentBlockhash: (await connection.getLatestBlockhash()).blockhash,
-    instructions: [transfer_ix],
+    // Create the destination associated token account (if needed)
+    instructions: [...create_ata_ix.instructions, transfer_ix],
   }).compileToV0Message();
   const tx = new VersionedTransaction(messageV0);
   tx.sign([keypair]);
@@ -73,9 +69,9 @@ async function main() {
   const signature = await connection.sendTransaction(tx);
   console.log("signature:", signature);
 
-  // Wait for the transaction to complete
+  // Wait for the transaction to be confirmed
   const latest_blockhash = await connection.getLatestBlockhash();
-  await connection.confirmTransaction({ signature, ...latest_blockhash }, "confirmed");
+  await connection.confirmTransaction({ signature, ...latest_blockhash });
 }
 
 main();

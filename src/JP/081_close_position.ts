@@ -1,15 +1,7 @@
 import { PublicKey } from "@solana/web3.js";
 import { AnchorProvider } from "@coral-xyz/anchor";
-import {
-  WhirlpoolContext, buildWhirlpoolClient, ORCA_WHIRLPOOL_PROGRAM_ID,
-  PDAUtil, PoolUtil, WhirlpoolIx, decreaseLiquidityQuoteByLiquidityWithParams,
-  TokenExtensionUtil
-} from "@orca-so/whirlpools-sdk";
-import {
-  Instruction, EMPTY_INSTRUCTION, resolveOrCreateATA, TransactionBuilder, Percentage,
-  DecimalUtil
-} from "@orca-so/common-sdk";
-import { getAssociatedTokenAddressSync } from "@solana/spl-token";
+import { WhirlpoolContext, buildWhirlpoolClient, ORCA_WHIRLPOOL_PROGRAM_ID } from "@orca-so/whirlpools-sdk";
+import { Percentage } from "@orca-so/common-sdk";
 
 // スクリプト実行前に環境変数定義が必要です
 // ANCHOR_PROVIDER_URL=https://api.devnet.solana.com

@@ -24,7 +24,7 @@ async function main() {
   // Since SOL is internally managed as an integer value and denominated in lamports,
   // divide by 10^9 to obtain a value denominated in SOL.
   console.log("lamports:", sol_balance);
-  console.log("SOL:", sol_balance / 10 ** 9);
+  console.log("SOL:", sol_balance / 10**9);
 }
 
 main();
