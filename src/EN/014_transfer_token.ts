@@ -63,30 +63,8 @@ async function main() {
   console.log("signature:", signature);
 
   // Wait for the transaction to complete
-  await confirmTransaction(connection, signature);
-}
-
-async function confirmTransaction(connection: Connection, signature: string) {
-  const timeoutMs = 90000;
-  const startTime = Date.now();
-  while (Date.now() - startTime < timeoutMs) {
-    const transactionStartTime = Date.now();
-
-    const statuses = await connection.getSignatureStatuses([signature]);
-    if (statuses && statuses.value[0]) {
-      if (!statuses.value[0].err) {
-        console.log("Transaction confirmed");
-        return
-      }
-    }
-
-    const elapsedTime = Date.now() - transactionStartTime;
-    const remainingTime = Math.max(0, 1000 - elapsedTime);
-    if (remainingTime > 0) {
-      await new Promise((resolve) => setTimeout(resolve, remainingTime));
-    }
-  }
-  throw new Error("Transacton not confirmed");
+  const latest_blockhash = await connection.getLatestBlockhash();
+  await connection.confirmTransaction({ signature, ...latest_blockhash }, "confirmed");
 }
 
 main();
