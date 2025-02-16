@@ -32,6 +32,8 @@ async function main() {
   const close_position_tx = await whirlpool.closePosition(position_pubkey, slippage);
 
   // Send the transaction
+  // Since Close includes various necessary processes such as fee and reward collection, it may be split into two or more transactions.
+  // However, in most cases, you can expect it to be a single transaction.
   for (const tx of close_position_tx) {
     const signature = await tx.buildAndExecute();
     console.log("signature:", signature);

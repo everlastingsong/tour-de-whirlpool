@@ -19,6 +19,7 @@ async function main() {
   console.log("wallet pubkey:", ctx.wallet.publicKey.toBase58());
 
   // 全てのトークンアカウントを取得
+  // このチュートリアルや UI は Token - 2022 を使った NFT を作ります。Token を使った古い NFT も念の為探索します。
   const token_program_token_accounts = (await ctx.connection.getTokenAccountsByOwner(ctx.wallet.publicKey, { programId: TOKEN_PROGRAM_ID })).value;
   const token_2022_program_token_accounts = (await ctx.connection.getTokenAccountsByOwner(ctx.wallet.publicKey, { programId: TOKEN_2022_PROGRAM_ID })).value;
   const token_accounts = token_program_token_accounts.concat(token_2022_program_token_accounts);

@@ -19,6 +19,7 @@ async function main() {
   console.log("wallet pubkey:", ctx.wallet.publicKey.toBase58());
 
   // Get all token accounts
+  // This tutorial and UI create NFTs using Token-2022. We will also explore older NFTs created with the traditional Token standard, just in case.
   const token_program_token_accounts = (await ctx.connection.getTokenAccountsByOwner(ctx.wallet.publicKey, { programId: TOKEN_PROGRAM_ID })).value;
   const token_2022_program_token_accounts = (await ctx.connection.getTokenAccountsByOwner(ctx.wallet.publicKey, { programId: TOKEN_2022_PROGRAM_ID })).value;
   const token_accounts = token_program_token_accounts.concat(token_2022_program_token_accounts);

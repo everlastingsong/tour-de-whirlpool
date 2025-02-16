@@ -37,7 +37,11 @@ async function main() {
   const close_position_tx = await whirlpool.closePosition(position_pubkey, slippage);
 
   //LANG:JP トランザクションを送信
+  //LANG:JP Close は手数料やリワードの回収など必要な処理を多く含むため、2つ以上のトランザクションに分割される場合があります。
+  //LANG:JP ただし、多くの場合は1つのトランザクションであることを期待できます。
   //LANG:EN Send the transaction
+  //LANG:EN Since Close includes various necessary processes such as fee and reward collection, it may be split into two or more transactions.
+  //LANG:EN However, in most cases, you can expect it to be a single transaction.
   for (const tx of close_position_tx) {
     const signature = await tx.buildAndExecute();
     console.log("signature:", signature);
