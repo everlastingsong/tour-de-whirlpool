@@ -1,10 +1,9 @@
 import { AnchorProvider, BN } from "@coral-xyz/anchor";
 import {
   WhirlpoolContext, buildWhirlpoolClient, ORCA_WHIRLPOOL_PROGRAM_ID,
-  PDAUtil, PriceMath, PoolUtil, IGNORE_CACHE
+  PDAUtil, IGNORE_CACHE
 } from "@orca-so/whirlpools-sdk";
-import { TOKEN_PROGRAM_ID, unpackAccount } from "@solana/spl-token";
-import { DecimalUtil } from "@orca-so/common-sdk";
+import { TOKEN_2022_PROGRAM_ID, TOKEN_PROGRAM_ID, unpackAccount } from "@solana/spl-token";
 
 // スクリプト実行前に環境変数定義が必要です
 // ANCHOR_PROVIDER_URL=https://api.devnet.solana.com
@@ -20,11 +19,14 @@ async function main() {
   console.log("wallet pubkey:", ctx.wallet.publicKey.toBase58());
 
   // 全てのトークンアカウントを取得
-  const token_accounts = (await ctx.connection.getTokenAccountsByOwner(ctx.wallet.publicKey, {programId: TOKEN_PROGRAM_ID})).value;
+  // このチュートリアルや UI は Token - 2022 を使った NFT を作ります。Token を使った古い NFT も念の為探索します。
+  const token_program_token_accounts = (await ctx.connection.getTokenAccountsByOwner(ctx.wallet.publicKey, { programId: TOKEN_PROGRAM_ID })).value;
+  const token_2022_program_token_accounts = (await ctx.connection.getTokenAccountsByOwner(ctx.wallet.publicKey, { programId: TOKEN_2022_PROGRAM_ID })).value;
+  const token_accounts = token_program_token_accounts.concat(token_2022_program_token_accounts);
 
   // ポジションのアドレス候補を取得
   const whirlpool_position_candidate_pubkeys = token_accounts.map((ta) => {
-    const parsed = unpackAccount(ta.pubkey, ta.account);
+    const parsed = unpackAccount(ta.pubkey, ta.account, ta.account.owner);
 
     // ミントアドレスから Whirlpool のポジションのアドレスを導出(実在するかは問わない)
     const pda = PDAUtil.getPosition(ctx.program.programId, parsed.mint);
@@ -44,7 +46,7 @@ async function main() {
   // Whirlpool のポジションのアドレスからデータを取得
   const whirlpool_position_candidate_datas = await ctx.fetcher.getPositions(whirlpool_position_candidate_pubkeys, IGNORE_CACHE);
   // 正しくデータ取得できたアドレスのみポジションのアドレスとして残す
-  const whirlpool_positions = whirlpool_position_candidate_pubkeys.filter((pubkey, i) => 
+  const whirlpool_positions = whirlpool_position_candidate_pubkeys.filter((pubkey, i) =>
     whirlpool_position_candidate_datas[i] !== null
   );
 

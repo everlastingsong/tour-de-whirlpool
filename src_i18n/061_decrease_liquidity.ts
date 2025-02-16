@@ -92,7 +92,7 @@ async function main() {
   //LANG:JP トランザクション完了待ち
   //LANG:EN Wait for the transaction to complete
   const latest_blockhash = await ctx.connection.getLatestBlockhash();
-  await ctx.connection.confirmTransaction({signature, ...latest_blockhash}, "confirmed");
+  await ctx.connection.confirmTransaction({ signature, ...latest_blockhash }, "confirmed");
 
   //LANG:JP トランザクション実行後の流動性を表示
   //LANG:EN Output the liquidity after transaction execution

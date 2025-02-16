@@ -5,7 +5,8 @@ import {
   PDAUtil, PoolUtil, WhirlpoolIx
 } from "@orca-so/whirlpools-sdk";
 import {
-  Instruction, EMPTY_INSTRUCTION, resolveOrCreateATA, TransactionBuilder
+  Instruction, EMPTY_INSTRUCTION, resolveOrCreateATA,
+  TransactionBuilder
 } from "@orca-so/common-sdk";
 import { getAssociatedTokenAddressSync } from "@solana/spl-token";
 
@@ -31,7 +32,9 @@ async function main() {
   // ポジション・プール取得
   const position = await client.getPosition(position_pubkey);
   const position_owner = ctx.wallet.publicKey;
-  const position_token_account = getAssociatedTokenAddressSync(position.getData().positionMint, position_owner);
+  const position_mint = position.getData().positionMint;
+  const position_mint_program_id = position.getPositionMintTokenProgramId();
+  const position_token_account = getAssociatedTokenAddressSync(position_mint, position_owner, false, position_mint_program_id);
   const whirlpool_pubkey = position.getData().whirlpool;
   const whirlpool = await client.getPool(whirlpool_pubkey);
   const token_a = whirlpool.getTokenAInfo();
@@ -48,17 +51,17 @@ async function main() {
   tokens_to_be_collected.add(token_a.mint.toBase58());
   tokens_to_be_collected.add(token_b.mint.toBase58());
   whirlpool.getData().rewardInfos.map((reward_info) => {
-    if ( PoolUtil.isRewardInitialized(reward_info) ) {
+    if (PoolUtil.isRewardInitialized(reward_info)) {
       tokens_to_be_collected.add(reward_info.mint.toBase58());
     }
   });
   // トークンアカウントのアドレス取得および存在しない場合の作成命令を取得
   const required_ta_ix: Instruction[] = [];
   const token_account_map = new Map<string, PublicKey>();
-  for ( let mint_b58 of tokens_to_be_collected ) {
+  for (let mint_b58 of tokens_to_be_collected) {
     const mint = new PublicKey(mint_b58);
     // 存在する場合は ix は EMPTY_INSTRUCTION
-    const {address, ...ix} = await resolveOrCreateATA(
+    const { address, ...ix } = await resolveOrCreateATA(
       ctx.connection,
       position_owner,
       mint,
@@ -78,7 +81,7 @@ async function main() {
       tickArrayUpper: tick_array_upper_pubkey,
     }
   );
-  
+
   // フィー回収の命令を作成
   let collect_fees_ix = WhirlpoolIx.collectFeesIx(
     ctx.program,
@@ -89,16 +92,16 @@ async function main() {
       positionTokenAccount: position_token_account,
       tokenOwnerAccountA: token_account_map.get(token_a.mint.toBase58()),
       tokenOwnerAccountB: token_account_map.get(token_b.mint.toBase58()),
-      tokenVaultA: whirlpool.getData().tokenVaultA, 
+      tokenVaultA: whirlpool.getData().tokenVaultA,
       tokenVaultB: whirlpool.getData().tokenVaultB,
     }
   );
 
   // リワード回収の命令を作成
   const collect_reward_ix = [EMPTY_INSTRUCTION, EMPTY_INSTRUCTION, EMPTY_INSTRUCTION];
-  for (let i=0; i<whirlpool.getData().rewardInfos.length; i++) {
+  for (let i = 0; i < whirlpool.getData().rewardInfos.length; i++) {
     const reward_info = whirlpool.getData().rewardInfos[i];
-    if ( !PoolUtil.isRewardInitialized(reward_info) ) continue;
+    if (!PoolUtil.isRewardInitialized(reward_info)) continue;
 
     collect_reward_ix[i] = WhirlpoolIx.collectRewardIx(
       ctx.program,
@@ -132,7 +135,7 @@ async function main() {
 
   // トランザクション完了待ち
   const latest_blockhash = await ctx.connection.getLatestBlockhash();
-  await ctx.connection.confirmTransaction({signature, ...latest_blockhash}, "confirmed");
+  await ctx.connection.confirmTransaction({ signature, ...latest_blockhash }, "confirmed");
 }
 
 main();

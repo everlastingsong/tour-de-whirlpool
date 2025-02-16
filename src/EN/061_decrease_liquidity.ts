@@ -75,7 +75,7 @@ async function main() {
 
   // Wait for the transaction to complete
   const latest_blockhash = await ctx.connection.getLatestBlockhash();
-  await ctx.connection.confirmTransaction({signature, ...latest_blockhash}, "confirmed");
+  await ctx.connection.confirmTransaction({ signature, ...latest_blockhash }, "confirmed");
 
   // Output the liquidity after transaction execution
   console.log("liquidity(after):", (await position.refreshData()).liquidity.toString());

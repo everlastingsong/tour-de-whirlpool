@@ -1,4 +1,7 @@
-import { Keypair, Connection, SystemProgram, PublicKey, Transaction } from "@solana/web3.js";
+import {
+  Keypair, Connection, SystemProgram,
+  PublicKey, TransactionMessage, VersionedTransaction
+} from "@solana/web3.js";
 import secret from "../wallet.json";
 
 const RPC_ENDPOINT_URL = "https://api.devnet.solana.com";
@@ -30,19 +33,23 @@ async function main() {
 
   //LANG:JP トランザクションを作成し、命令を追加
   //LANG:EN Create a transaction and add the instruction
-  const tx = new Transaction();
-  tx.add(transfer_ix);
+  const messageV0 = new TransactionMessage({
+    payerKey: keypair.publicKey,
+    recentBlockhash: (await connection.getLatestBlockhash()).blockhash,
+    instructions: [transfer_ix],
+  }).compileToV0Message();
+  const tx = new VersionedTransaction(messageV0);
+  tx.sign([keypair]);
 
   //LANG:JP トランザクションを送信
   //LANG:EN Send the transaction
-  const signers = [keypair];
-  const signature = await connection.sendTransaction(tx, signers);
+  const signature = await connection.sendTransaction(tx);
   console.log("signature:", signature);
 
   //LANG:JP トランザクション完了待ち
   //LANG:EN Wait for the transaction to complete
   const latest_blockhash = await connection.getLatestBlockhash();
-  await connection.confirmTransaction({signature, ...latest_blockhash});
+  await connection.confirmTransaction({ signature, ...latest_blockhash });
 }
 
 main();

@@ -3,7 +3,7 @@ import {
   WhirlpoolContext, buildWhirlpoolClient, ORCA_WHIRLPOOL_PROGRAM_ID,
   PDAUtil, PriceMath, PoolUtil, IGNORE_CACHE
 } from "@orca-so/whirlpools-sdk";
-import { TOKEN_PROGRAM_ID, unpackAccount } from "@solana/spl-token";
+import { TOKEN_2022_PROGRAM_ID, TOKEN_PROGRAM_ID, unpackAccount } from "@solana/spl-token";
 import { DecimalUtil } from "@orca-so/common-sdk";
 
 //LANG:JP スクリプト実行前に環境変数定義が必要です
@@ -22,13 +22,17 @@ async function main() {
   console.log("wallet pubkey:", ctx.wallet.publicKey.toBase58());
 
   //LANG:JP 全てのトークンアカウントを取得
+  //LANG:JP このチュートリアルや UI は Token - 2022 を使った NFT を作ります。Token を使った古い NFT も念の為探索します。
   //LANG:EN Get all token accounts
-  const token_accounts = (await ctx.connection.getTokenAccountsByOwner(ctx.wallet.publicKey, {programId: TOKEN_PROGRAM_ID})).value;
+  //LANG:EN This tutorial and UI create NFTs using Token-2022. We will also explore older NFTs created with the traditional Token standard, just in case.
+  const token_program_token_accounts = (await ctx.connection.getTokenAccountsByOwner(ctx.wallet.publicKey, { programId: TOKEN_PROGRAM_ID })).value;
+  const token_2022_program_token_accounts = (await ctx.connection.getTokenAccountsByOwner(ctx.wallet.publicKey, { programId: TOKEN_2022_PROGRAM_ID })).value;
+  const token_accounts = token_program_token_accounts.concat(token_2022_program_token_accounts);
 
   //LANG:JP ポジションのアドレス候補を取得
   //LANG:EN Get candidate addresses for the position
   const whirlpool_position_candidate_pubkeys = token_accounts.map((ta) => {
-    const parsed = unpackAccount(ta.pubkey, ta.account);
+    const parsed = unpackAccount(ta.pubkey, ta.account, ta.account.owner);
 
     //LANG:JP ミントアドレスから Whirlpool のポジションのアドレスを導出(実在するかは問わない)
     //LANG:EN Derive the address of Whirlpool's position from the mint address (whether or not it exists)
@@ -44,13 +48,13 @@ async function main() {
   const whirlpool_position_candidate_datas = await ctx.fetcher.getPositions(whirlpool_position_candidate_pubkeys, IGNORE_CACHE);
   //LANG:JP 正しくデータ取得できたアドレスのみポジションのアドレスとして残す
   //LANG:EN Leave only addresses with correct data acquisition as position addresses
-  const whirlpool_positions = whirlpool_position_candidate_pubkeys.filter((pubkey, i) => 
+  const whirlpool_positions = whirlpool_position_candidate_pubkeys.filter((pubkey, i) =>
     whirlpool_position_candidate_datas[i] !== null
   );
 
   //LANG:JP 状態表示
   //LANG:EN Output the status of the positions
-  for (let i=0; i < whirlpool_positions.length; i++ ) {
+  for (let i = 0; i < whirlpool_positions.length; i++) {
     const p = whirlpool_positions[i];
 
     //LANG:JP ポジションの情報取得
