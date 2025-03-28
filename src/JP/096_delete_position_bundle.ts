@@ -47,7 +47,7 @@ async function main() {
       owner: ctx.wallet.publicKey,
       receiver: ctx.wallet.publicKey,
     }
-  )
+  );
 
   // トランザクションを作成
   const tx_builder = new TransactionBuilder(ctx.connection, ctx.wallet);

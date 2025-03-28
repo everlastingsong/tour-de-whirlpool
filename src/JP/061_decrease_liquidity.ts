@@ -48,13 +48,17 @@ async function main() {
     // プール状態をそのまま渡す
     sqrtPrice: whirlpool_data.sqrtPrice,
     tickCurrentIndex: whirlpool_data.tickCurrentIndex,
+
     // 価格帯はポジションのものをそのまま渡す
     tickLowerIndex: position.getData().tickLowerIndex,
     tickUpperIndex: position.getData().tickUpperIndex,
+
     // 引き出す流動性
     liquidity: delta_liquidity,
+
     // スリッページ
     slippageTolerance: slippage,
+
     // TokenExtensions のトークン情報を取得
     tokenExtensionCtx: await TokenExtensionUtil.buildTokenExtensionContext(ctx.fetcher, whirlpool_data),
   });

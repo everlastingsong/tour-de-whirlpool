@@ -18,7 +18,6 @@ async function main() {
   // Convert the token name to the mint address
   const devTokenName = process.argv[process.argv.length - 1];
   const devTokenMint = new PublicKey(Object.keys(token_defs).find(key => token_defs[key].name === devTokenName));
-  
   // Create a connection for sending RPC requests to Devnet
   const connection = new Connection(RPC_ENDPOINT_URL, COMMITMENT);
 

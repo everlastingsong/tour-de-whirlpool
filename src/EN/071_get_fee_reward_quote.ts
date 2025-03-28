@@ -84,7 +84,7 @@ async function main() {
         DecimalUtil.adjustDecimals(new Decimal(reward.toString()), token.decimals),
         token.name
       );
-    }
+    } 
     else {
       console.log(`reward[${i}]: NOT INITIALIZED`);
     }

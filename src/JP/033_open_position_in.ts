@@ -71,14 +71,18 @@ async function main() {
     tokenMintB: token_b.mint,
     sqrtPrice: whirlpool_data.sqrtPrice,
     tickCurrentIndex: whirlpool_data.tickCurrentIndex,
+
     // 価格帯
     tickLowerIndex: lower_tick_index,
     tickUpperIndex: upper_tick_index,
+
     // 入力にするトークン
     inputTokenMint: devUSDC.mint,
     inputTokenAmount: dev_usdc_amount,
+
     // スリッページ
     slippageTolerance: slippage,
+
     // TokenExtensions のトークン情報を取得
     tokenExtensionCtx: await TokenExtensionUtil.buildTokenExtensionContext(ctx.fetcher, whirlpool_data),
   });

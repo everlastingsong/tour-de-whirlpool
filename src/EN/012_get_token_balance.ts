@@ -47,6 +47,7 @@ async function main() {
 
     // Deserialize
     const parsed_token_account = unpackAccount(value.pubkey, value.account);
+
     // Use the mint address to determine which token account is for which token
     const mint = parsed_token_account.mint;
     const token_def = token_defs[mint.toBase58()];
@@ -55,6 +56,7 @@ async function main() {
 
     // The balance is "amount"
     const amount = parsed_token_account.amount;
+
     // The balance is managed as an integer value, so it must be converted for UI display
     const ui_amount = DecimalUtil.fromBN(new BN(amount.toString()), token_def.decimals);
 

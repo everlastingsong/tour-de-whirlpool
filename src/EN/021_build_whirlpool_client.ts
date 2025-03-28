@@ -12,10 +12,16 @@ import { WhirlpoolContext, buildWhirlpoolClient, ORCA_WHIRLPOOL_PROGRAM_ID } fro
 // > ts-node this_script.ts
 
 async function main() {
+  // Acquire Anchor provider from environment variables
   const provider = AnchorProvider.env();
+
+  // Initialize the WhirlpoolContext with the provider
   const ctx = WhirlpoolContext.withProvider(provider, ORCA_WHIRLPOOL_PROGRAM_ID);
+
+  // Build the Whirlpool client
   const client = buildWhirlpoolClient(ctx);
 
+  // Display the RPC endpoint and wallet public key
   console.log("endpoint:", ctx.connection.rpcEndpoint);
   console.log("wallet pubkey:", ctx.wallet.publicKey.toBase58());
 }

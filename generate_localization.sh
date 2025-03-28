@@ -2,7 +2,7 @@
 
 SRC_DIR="src_i18n"
 TARGET_DIR="src"
-LANG_LIST="JP EN"
+LANG_LIST="JP EN KR"
 
 for lang in $LANG_LIST
 do

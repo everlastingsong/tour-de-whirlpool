@@ -34,12 +34,12 @@ async function main() {
 
     // トークン数が 1 の場合のみ Whirlpool のポジションのアドレスを返す(空のトークンアカウントやNFTではないものは無視)
     return new BN(parsed.amount.toString()).eq(new BN(1)) ? pda.publicKey : undefined;
-  }).filter(pubkey => pubkey !== undefined);
+  }).filter((pubkey) => pubkey !== undefined);
 
   // Whirlpool のポジションのアドレスからデータを取得
   const whirlpool_position_candidate_datas = await ctx.fetcher.getPositions(whirlpool_position_candidate_pubkeys, IGNORE_CACHE);
   // 正しくデータ取得できたアドレスのみポジションのアドレスとして残す
-  const whirlpool_positions = whirlpool_position_candidate_pubkeys.filter((pubkey, i) =>
+  const whirlpool_positions = whirlpool_position_candidate_pubkeys.filter((pubkey, i) => 
     whirlpool_position_candidate_datas[i] !== null
   );
 

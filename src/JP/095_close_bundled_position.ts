@@ -50,6 +50,7 @@ async function close_bundled_position(client: WhirlpoolClient, position_bundle_p
       tokens_to_be_collected.add(reward_info.mint.toBase58());
     }
   });
+
   // トークンアカウントのアドレス取得および存在しない場合の作成命令を取得
   const required_ta_ix: Instruction[] = [];
   const token_account_map = new Map<string, PublicKey>();
@@ -70,7 +71,7 @@ async function close_bundled_position(client: WhirlpoolClient, position_bundle_p
   let update_fee_and_rewards_ix = position.getData().liquidity.isZero()
     ? EMPTY_INSTRUCTION
     : WhirlpoolIx.updateFeesAndRewardsIx(
-      ctx.program,
+      ctx.program, 
       {
         whirlpool: position.getData().whirlpool,
         position: bundled_position_pubkey,
@@ -78,7 +79,7 @@ async function close_bundled_position(client: WhirlpoolClient, position_bundle_p
         tickArrayUpper: tick_array_upper_pubkey,
       }
     );
-  
+
   // フィー回収の命令を作成
   let collect_fees_ix = WhirlpoolIx.collectFeesIx(
     ctx.program,
@@ -89,7 +90,7 @@ async function close_bundled_position(client: WhirlpoolClient, position_bundle_p
       positionTokenAccount: position_bundle_token_account,
       tokenOwnerAccountA: token_account_map.get(token_a.mint.toBase58()),
       tokenOwnerAccountB: token_account_map.get(token_b.mint.toBase58()),
-      tokenVaultA: whirlpool.getData().tokenVaultA, 
+      tokenVaultA: whirlpool.getData().tokenVaultA,
       tokenVaultB: whirlpool.getData().tokenVaultB,
     }
   );
@@ -128,7 +129,6 @@ async function close_bundled_position(client: WhirlpoolClient, position_bundle_p
   // 見積もり結果表示
   console.log("devSAMO min output:", DecimalUtil.fromBN(quote.tokenMinA, token_a.decimals).toFixed(token_a.decimals));
   console.log("devUSDC min output:", DecimalUtil.fromBN(quote.tokenMinB, token_b.decimals).toFixed(token_b.decimals));
-  
   // 流動性を引き出す命令を作成
   const decrease_liquidity_ix = position.getData().liquidity.isZero()
     ? EMPTY_INSTRUCTION
@@ -142,12 +142,12 @@ async function close_bundled_position(client: WhirlpoolClient, position_bundle_p
         positionTokenAccount: position_bundle_token_account,
         tokenOwnerAccountA: token_account_map.get(token_a.mint.toBase58()),
         tokenOwnerAccountB: token_account_map.get(token_b.mint.toBase58()),
-        tokenVaultA: whirlpool.getData().tokenVaultA, 
+        tokenVaultA: whirlpool.getData().tokenVaultA,
         tokenVaultB: whirlpool.getData().tokenVaultB,
         tickArrayLower: tick_array_lower_pubkey,
         tickArrayUpper: tick_array_upper_pubkey,
       }
-    );  
+    );
 
   // PositionBundle で管理するポジションをクローズする命令を作成
   const close_bundled_position_ix = WhirlpoolIx.closeBundledPositionIx(

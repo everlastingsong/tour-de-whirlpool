@@ -45,6 +45,7 @@ async function main() {
 
   // Whirlpool のポジションのアドレスからデータを取得
   const whirlpool_position_candidate_datas = await ctx.fetcher.getPositions(whirlpool_position_candidate_pubkeys, IGNORE_CACHE);
+
   // 正しくデータ取得できたアドレスのみポジションのアドレスとして残す
   const whirlpool_positions = whirlpool_position_candidate_pubkeys.filter((pubkey, i) =>
     whirlpool_position_candidate_datas[i] !== null
