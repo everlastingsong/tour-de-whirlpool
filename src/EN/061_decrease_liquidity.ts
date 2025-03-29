@@ -48,13 +48,17 @@ async function main() {
     // Pass the pool state as is
     sqrtPrice: whirlpool_data.sqrtPrice,
     tickCurrentIndex: whirlpool_data.tickCurrentIndex,
+
     // Pass the price range of the position as is
     tickLowerIndex: position.getData().tickLowerIndex,
     tickUpperIndex: position.getData().tickUpperIndex,
+
     // Liquidity to be withdrawn
     liquidity: delta_liquidity,
+
     // Acceptable slippage
     slippageTolerance: slippage,
+
     // Get token info for TokenExtensions
     tokenExtensionCtx: await TokenExtensionUtil.buildTokenExtensionContext(ctx.fetcher, whirlpool_data),
   });

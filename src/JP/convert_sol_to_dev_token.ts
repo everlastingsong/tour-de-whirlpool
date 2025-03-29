@@ -18,7 +18,6 @@ async function main() {
   // トークン名を受け取り mint アドレスに変換
   const devTokenName = process.argv[process.argv.length - 1];
   const devTokenMint = new PublicKey(Object.keys(token_defs).find(key => token_defs[key].name === devTokenName));
-  
   // Devnet の RPC への要求用のコネクションを作成
   const connection = new Connection(RPC_ENDPOINT_URL, COMMITMENT);
 

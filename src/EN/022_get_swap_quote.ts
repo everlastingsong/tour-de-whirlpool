@@ -31,13 +31,14 @@ async function main() {
   const DEVNET_WHIRLPOOLS_CONFIG = new PublicKey("FcrweFY1G9HJAHG5inkGB6pKg1HZ6x9UC2WioAfWrGkR");
 
   // Get devSAMO/devUSDC whirlpool
-  // Whirlpools are identified by 5 elements (Program, Config, mint address of the 1st token,
+  // Whirlpools are identified by 5 elements (Program, Config, mint address of the 1st token, 
   // mint address of the 2nd token, tick spacing), similar to the 5 column compound primary key in DB
   const tick_spacing = 64;
   const whirlpool_pubkey = PDAUtil.getWhirlpool(
-      ORCA_WHIRLPOOL_PROGRAM_ID,
-      DEVNET_WHIRLPOOLS_CONFIG,
-      devSAMO.mint, devUSDC.mint, tick_spacing).publicKey;
+    ORCA_WHIRLPOOL_PROGRAM_ID,
+    DEVNET_WHIRLPOOLS_CONFIG,
+    devSAMO.mint, devUSDC.mint, tick_spacing
+  ).publicKey;
   console.log("whirlpool_key:", whirlpool_pubkey.toBase58());
   const whirlpool = await client.getPool(whirlpool_pubkey);
 

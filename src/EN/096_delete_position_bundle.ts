@@ -47,7 +47,7 @@ async function main() {
       owner: ctx.wallet.publicKey,
       receiver: ctx.wallet.publicKey,
     }
-  )
+  );
 
   // Create a transaction
   const tx_builder = new TransactionBuilder(ctx.connection, ctx.wallet);

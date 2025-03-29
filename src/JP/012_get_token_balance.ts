@@ -47,6 +47,7 @@ async function main() {
 
     // デコード
     const parsed_token_account = unpackAccount(value.pubkey, value.account);
+
     // mint アドレスからどのトークンのトークンアカウントか特定
     const mint = parsed_token_account.mint;
     const token_def = token_defs[mint.toBase58()];
@@ -55,6 +56,7 @@ async function main() {
 
     // 残高は amount
     const amount = parsed_token_account.amount;
+
     // 残高は整数で管理されているため、UI 表示用に変換
     const ui_amount = DecimalUtil.fromBN(new BN(amount.toString()), token_def.decimals);
 

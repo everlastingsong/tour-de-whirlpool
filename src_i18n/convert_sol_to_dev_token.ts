@@ -17,21 +17,24 @@ async function main() {
 
   //LANG:JP トークン名を受け取り mint アドレスに変換
   //LANG:EN Convert the token name to the mint address
+  //LANG:KR 토큰 이름을 받아 mint 주소로 변환
   const devTokenName = process.argv[process.argv.length - 1];
   const devTokenMint = new PublicKey(Object.keys(token_defs).find(key => token_defs[key].name === devTokenName));
-  
   //LANG:JP Devnet の RPC への要求用のコネクションを作成
   //LANG:EN Create a connection for sending RPC requests to Devnet
+  //LANG:KR Devnet RPC 연결 생성
   const connection = new Connection(RPC_ENDPOINT_URL, COMMITMENT);
 
   //LANG:JP wallet.json から秘密鍵を読み込み (秘密鍵と公開鍵のペアは Keypair クラスで管理する)
   //LANG:EN Read in the private key from wallet.json (The public and private key pair will be managed using the Keypair class)
+  //LANG:KR wallet.json에서 비밀키를 로드 (공개키/비밀키 쌍은 Keypair로 관리)
   const keypair = Keypair.fromSecretKey(new Uint8Array(secret));
 
   //LANG:JP 使用する RPC とウォレットの公開鍵を表示
   //LANG:JP 公開鍵を表示する場合は Base58 形式の文字列で表示する
   //LANG:EN Display the RPC and the wallet's public key
   //LANG:EN When displaying the public key, use base58 encoding
+  //LANG:KR 사용 중인 RPC와 지갑의 공개키를 출력
   console.log("endpoint:", connection.rpcEndpoint);
   console.log("wallet pubkey:", keypair.publicKey.toBase58());
 
@@ -40,6 +43,8 @@ async function main() {
   //LANG:EN Create a transaction and add the instruction
   //LANG:EN Send 0.2 SOL to execute the distribute instruction of the program that distributes devToken
   //LANG:EN (details omitted since this is not the main part of the tutorial)
+  //LANG:KR 트랜잭션 생성 후 명령 추가
+  //LANG:KR 0.2 SOL을 보내면 devToken을 배포하는 프로그램의 distribute 명령을 실행 (튜토리얼 핵심 내용 아님)
   const DEVTOKEN_DISTRIBUTOR_PROGRAM_ID = new PublicKey("Bu2AaWnVoveQT47wP4obpmmZUwK9bN9ah4w6Vaoa93Y9");
   const DEVTOKEN_ADMIN = new PublicKey("3otH3AHWqkqgSVfKFkrxyDqd2vK6LcaqigHrFEmWcGuo");
   const PDA = new PublicKey("3pgfe1L6jcq59uy3LZmmeSCk9mwVvHXjn21nSvNr8D6x");
@@ -68,12 +73,14 @@ async function main() {
 
   //LANG:JP トランザクションを送信
   //LANG:EN Send the transaction
+  //LANG:KR 트랜잭션 전파
   const signers = [keypair];
   const signature = await connection.sendTransaction(tx, signers);
   console.log("signature:", signature);
 
   //LANG:JP トランザクション完了待ち
   //LANG:EN Wait for the transaction to complete
+  //LANG:KR 트랜잭션 반영까지 대기
   const latest_blockhash = await connection.getLatestBlockhash();
   await connection.confirmTransaction({signature, ...latest_blockhash});
 
@@ -81,10 +88,12 @@ async function main() {
   //LANG:JP Connection クラスの getTokenAccountBalance メソッドを利用する
   //LANG:EN Obtain the token balance
   //LANG:EN Use the getTokenAccountBalance method from the Connection class
+  //LANG:KR 토큰 잔액 조회 (Connection 클래스의 getTokenAccountBalance 메서드 사용)
   const dev_token_balance = await connection.getTokenAccountBalance(user_vault);
 
   //LANG:JP トークン残高表示
   //LANG:EN Display the token balance
+  //LANG:KR 토큰 잔액 출력
   console.log(`${devTokenName}:`, dev_token_balance.value.uiAmount);
 }
 

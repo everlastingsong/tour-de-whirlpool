@@ -55,6 +55,7 @@ async function main() {
       tokens_to_be_collected.add(reward_info.mint.toBase58());
     }
   });
+
   // Get addresses of token accounts and get instructions to create if it does not exist
   const required_ta_ix: Instruction[] = [];
   const token_account_map = new Map<string, PublicKey>();
@@ -73,7 +74,7 @@ async function main() {
 
   // Build the instruction to update fees and rewards
   let update_fee_and_rewards_ix = WhirlpoolIx.updateFeesAndRewardsIx(
-    ctx.program,
+    ctx.program, 
     {
       whirlpool: position.getData().whirlpool,
       position: position_pubkey,
@@ -119,8 +120,10 @@ async function main() {
 
   // Create a transaction and add the instruction
   const tx_builder = new TransactionBuilder(ctx.connection, ctx.wallet);
+
   // Create token accounts
   required_ta_ix.map((ix) => tx_builder.addInstruction(ix));
+
   // Update fees and rewards, collect fees, and collect rewards
   tx_builder
     .addInstruction(update_fee_and_rewards_ix)
