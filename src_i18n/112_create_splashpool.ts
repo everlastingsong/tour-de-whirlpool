@@ -20,14 +20,20 @@ import { createMint } from "@solana/spl-token";
 // > set ANCHOR_WALLET=wallet.json
 // > ts-node this_script.ts
 
-// LANG:EN What is a SplashPool?
-// LANG:EN SplashPools are built on top of Orca's CLMM, but behave similar to a Constant Product AMM.
-// LANG:EN - it is a Whirlpool with a specific tick_spacing. SplashPool can be handled as Whirlpool.
-// LANG:EN - it has only 2 TickArrays (simple, low cost), which are initialized in the createSplashPool function.
-// LANG:EN - it allows FullRange positions only (similar to Constant Product AMM)
+//LANG:JP SplashPool と Concentrated Liquidity Pool の違い
+//LANG:JP SplashPool は Concentrated Liquidity Pool の上に構築されますが、Constant Product AMM のように振る舞います。
+//LANG:JP - SplashPool は特定の tick_spacing を持つ Whirlpool であり、Whirlpool として扱うことができます。
+//LANG:JP - SplashPool は 2 つの TickArray のみを持ちます (シンプルで低コスト)
+//LANG:JP - SplashPool は FullRange のポジションのみを許可します (Constant Product AMM に似ています)
+//LANG:EN What is a SplashPool?
+//LANG:EN SplashPools are built on top of Orca's CLMM, but behave similar to a Constant Product AMM.
+//LANG:EN - it is a Whirlpool with a specific tick_spacing. SplashPool can be handled as Whirlpool.
+//LANG:EN - it has only 2 TickArrays (simple, low cost), which are initialized in the createSplashPool function.
+//LANG:EN - it allows FullRange positions only (similar to Constant Product AMM)
 
-// LANG:EN These are the addresses of Orca owned Whirlpool Configs.
-// LANG:EN For more details, see https://dev.orca.so/Architecture%20Overview/Account%20Architecture
+//LANG:JP Orca が管理している WhirlpoolsConfig のアドレスは以下のページにリストされています
+//LANG:EN These are the addresses of Orca owned WhirlpoolsConfig. For more details, see
+// https://dev.orca.so/Architecture%20Overview/Account%20Architecture
 const DEVNET_WHIRLPOOLS_CONFIG = new PublicKey("FcrweFY1G9HJAHG5inkGB6pKg1HZ6x9UC2WioAfWrGkR");
 
 async function main() {
@@ -40,8 +46,9 @@ async function main() {
   console.log("endpoint:", ctx.connection.rpcEndpoint);
   console.log("wallet pubkey:", ctx.wallet.publicKey.toBase58());
 
-  // LANG:EN Create new token mints. Note that the in a more realistic scenario,
-  // LANG:EN the mints are generated beforehand.
+  //LANG:JP 新たなトークンを作成 (トークンは事前に作成されているべきであり、チュートリアル固有の処理です)
+  //LANG:EN Create new token mints. Note that the in a more realistic scenario,
+  //LANG:EN the mints are generated beforehand.
   const walletKeypair = (ctx.wallet as unknown as { payer: Keypair }).payer;
   const newTokenPubkeys = await Promise.all([
     createMint(
@@ -60,11 +67,15 @@ async function main() {
       ),
   ]);
 
-  // LANG:EN Token A and Token B Mint has to be cardinally ordered
-  // LANG:EN For example, SOL/USDC can be created, but USDC/SOL cannot be created
+  //LANG:JP 2 つのトークンを辞書順に並べ替え
+  //LANG:JP Whirlpool は 2 つのトークン A/B のペアで構成されますが、順番がトークンのミントアドレスの辞書順と決まっています
+  //LANG:JP 例えば、SOL/USDC のペアは作成できますが、USDC/SOL のペアは作成できません
+  //LANG:EN Token A and Token B Mint has to be cardinally ordered
+  //LANG:EN For example, SOL/USDC can be created, but USDC/SOL cannot be created
   const [tokenAddressA, tokenAddressB] = PoolUtil.orderMints(newTokenPubkeys[0], newTokenPubkeys[1]);
 
-  // LANG:EN Fetch token mint infos
+  //LANG:JP トークンのミントアカウントを取得
+  //LANG:EN Fetch token mint infos
   const tokenA = await ctx.fetcher.getMintInfo(tokenAddressA);
   const tokenB = await ctx.fetcher.getMintInfo(tokenAddressB);
   const decimalsA = tokenA.decimals;
@@ -72,10 +83,12 @@ async function main() {
   console.log("tokenA:", tokenAddressA.toString(), "decimals:", decimalsA);
   console.log("tokenB:", tokenAddressB.toString(), "decimals:", decimalsB);
 
-  // LANG:EN Set the price of token A in terms of token B
+  //LANG:JP プールの初期価格を設定 (価格単位は トークンB/トークンA)
+  //LANG:EN Set the price of token A in terms of token B
   const initialPrice = new Decimal(0.01);
 
-  // LANG:EN Create a new pool
+  //LANG:JP プールを作成
+  //LANG:EN Create a new pool
   const { poolKey, tx } = await client.createSplashPool(
     DEVNET_WHIRLPOOLS_CONFIG,
     tokenAddressA,
@@ -85,7 +98,8 @@ async function main() {
   );
   const txId = await tx.buildAndExecute();
 
-  // LANG:EN Fetch pool data to verify the initial price and tick
+  //LANG:JP 初期化したプールの Whirlpool アカウントを取得
+  //LANG:EN Fetch pool data to verify the initial price and tick
   const pool = await client.getPool(poolKey);
   const poolData = pool.getData();
   const poolInitialPrice = PriceMath.sqrtPriceX64ToPrice(
