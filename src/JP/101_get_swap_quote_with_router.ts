@@ -16,6 +16,7 @@ async function main() {
   // V0 トランザクション用の ALT を探す Lookup Table Fetcher を利用可能です
   // devnet では Orca が提供する Lookup Table Fetcher は存在しないため undefined とします
   // mainnet では以下のコードで Lookup Table Fetcher を作成できます
+  //
   // import { OrcaLookupTableFetcher } from "@orca-so/orca-sdk";
   // import axios from "axios";
   // const server = axios.create({baseURL: "https://api.mainnet.orca.so/v1", responseType: "json"});
@@ -96,6 +97,7 @@ async function main() {
 
     // 取得したルートの詳細を表示する
     // チュートリアルでは devSAMO/devUSDC と devTMAC/devUSDC プールを経由して devSAMO から devTMAC にトレードされることを期待している
+    //
     // devSAMO/devUSDC: EgxU92G34jw6QDG9RuTX9StFg1PmHuDqkRKAE5kVEiZ4
     // devTMAC/devUSDC: H3xhLrSEyDFm6jjG42QezbvhSxF5YHW75VdGUnqeEg5y
     const [tradeRoute, alts] = bestRoute;

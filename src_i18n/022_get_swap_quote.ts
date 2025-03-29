@@ -9,12 +9,14 @@ import Decimal from "decimal.js";
 
 //LANG:JP スクリプト実行前に環境変数定義が必要です
 //LANG:EN Environment variables must be defined before script execution
+//LANG:KR 스크립트 실행 전 환경변수 설정 필요함
 // ANCHOR_PROVIDER_URL=https://api.devnet.solana.com
 // ANCHOR_WALLET=wallet.json
 
 async function main() {
   //LANG:JP WhirlpoolClient 作成
   //LANG:EN Create WhirlpoolClient
+  //LANG:KR WhirlpoolClient 생성함
   const provider = AnchorProvider.env();
   const ctx = WhirlpoolContext.withProvider(provider, ORCA_WHIRLPOOL_PROGRAM_ID);
   const client = buildWhirlpoolClient(ctx);
@@ -24,6 +26,7 @@ async function main() {
 
   //LANG:JP トークン定義
   //LANG:EN Token definition
+  //LANG:KR 토큰 정의함
   // devToken specification
   // https://everlastingsong.github.io/nebula/
   const devUSDC = {mint: new PublicKey("BRjpCHtyQLNCo8gqRUr8jtdAj5AjPYQaoqbvcZiHok1k"), decimals: 6};
@@ -31,37 +34,46 @@ async function main() {
 
   //LANG:JP Whirlpool の Config アカウント
   //LANG:EN WhirlpoolsConfig account
+  //LANG:KR WhirlpoolsConfig 계정
   // devToken ecosystem / Orca Whirlpools
   const DEVNET_WHIRLPOOLS_CONFIG = new PublicKey("FcrweFY1G9HJAHG5inkGB6pKg1HZ6x9UC2WioAfWrGkR");
 
   //LANG:JP devSAMO/devUSDC プール取得
   //LANG:EN Get devSAMO/devUSDC whirlpool
+  //LANG:KR devSAMO/devUSDC 풀을 가져옴
   //LANG:JP Whirlpool のプールは (プログラム, Config, 1個目のトークンのミントアドレス, 2個目のトークンのミントアドレス, ティックスペース)
   //LANG:JP の 5 要素で特定されます (DBで考えると5列の複合プライマリキーです)
-  //LANG:EN Whirlpools are identified by 5 elements (Program, Config, mint address of the 1st token,
+  //LANG:EN Whirlpools are identified by 5 elements (Program, Config, mint address of the 1st token, 
   //LANG:EN mint address of the 2nd token, tick spacing), similar to the 5 column compound primary key in DB
+  //LANG:KR Whirlpools은 데이터베이스에서 5개의 열로 구성된 복합 기본키처럼, 다음의 5가지 요소로 식별됨
+  //LANG:KR 프로그램, Config, 첫 번째 토큰의 민트 주소, 두 번째 토큰의 민트 주소, 그리고 틱 간격격
   const tick_spacing = 64;
   const whirlpool_pubkey = PDAUtil.getWhirlpool(
-      ORCA_WHIRLPOOL_PROGRAM_ID,
-      DEVNET_WHIRLPOOLS_CONFIG,
-      devSAMO.mint, devUSDC.mint, tick_spacing).publicKey;
+    ORCA_WHIRLPOOL_PROGRAM_ID,
+    DEVNET_WHIRLPOOLS_CONFIG,
+    devSAMO.mint, devUSDC.mint, tick_spacing
+  ).publicKey;
   console.log("whirlpool_key:", whirlpool_pubkey.toBase58());
   const whirlpool = await client.getPool(whirlpool_pubkey);
 
   //LANG:JP 1 devUSDC トークンを devSAMO にスワップします
   //LANG:EN Swap 1 devUSDC for devSAMO
+  //LANG:KR devUSDC 1개를 devSAMO로 스왑함
   const amount_in = new Decimal("1" /* devUSDC */);
 
   //LANG:JP スワップの見積もり取得(シミュレーション実行)
   //LANG:EN Obtain swap estimation (run simulation)
+  //LANG:KR 스왑 예상치 획득(시뮬레이션 실행)
   const quote = await swapQuoteByInputToken(
     whirlpool,
     //LANG:JP 入力するトークン
     //LANG:EN Input token and amount
+    //LANG:KR 입력할 토큰과 수량
     devUSDC.mint,
     DecimalUtil.toBN(amount_in, devUSDC.decimals),
     //LANG:JP 許容するスリッページ (10/1000 = 1%)
     //LANG:EN Acceptable slippage (10/1000 = 1%)
+    //LANG:KR 허용 슬리피지 (10/1000 = 1%)
     Percentage.fromFraction(10, 1000),
     ctx.program.programId,
     ctx.fetcher,
@@ -70,6 +82,7 @@ async function main() {
 
   //LANG:JP 見積もり結果表示
   //LANG:EN Output the estimation
+  //LANG:KR 예상 결과 출력
   console.log("estimatedAmountIn:", DecimalUtil.fromBN(quote.estimatedAmountIn, devUSDC.decimals).toString(), "devUSDC");
   console.log("estimatedAmountOut:", DecimalUtil.fromBN(quote.estimatedAmountOut, devSAMO.decimals).toString(), "devSAMO");
   console.log("otherAmountThreshold:", DecimalUtil.fromBN(quote.otherAmountThreshold, devSAMO.decimals).toString(), "devSAMO");

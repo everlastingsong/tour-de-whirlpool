@@ -35,9 +35,10 @@ async function main() {
   // の 5 要素で特定されます (DBで考えると5列の複合プライマリキーです)
   const tick_spacing = 64;
   const whirlpool_pubkey = PDAUtil.getWhirlpool(
-      ORCA_WHIRLPOOL_PROGRAM_ID,
-      DEVNET_WHIRLPOOLS_CONFIG,
-      devSAMO.mint, devUSDC.mint, tick_spacing).publicKey;
+    ORCA_WHIRLPOOL_PROGRAM_ID,
+    DEVNET_WHIRLPOOLS_CONFIG,
+    devSAMO.mint, devUSDC.mint, tick_spacing
+  ).publicKey;
   console.log("whirlpool_key:", whirlpool_pubkey.toBase58());
   const whirlpool = await client.getPool(whirlpool_pubkey);
 

@@ -16,6 +16,7 @@ async function main() {
   // V0 トランザクション用の ALT を探す Lookup Table Fetcher を利用可能です
   // devnet では Orca が提供する Lookup Table Fetcher は存在しないため undefined とします
   // mainnet では以下のコードで Lookup Table Fetcher を作成できます
+  //
   // import { OrcaLookupTableFetcher } from "@orca-so/orca-sdk";
   // import axios from "axios";
   // const server = axios.create({baseURL: "https://api.mainnet.orca.so/v1", responseType: "json"});

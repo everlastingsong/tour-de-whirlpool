@@ -55,6 +55,7 @@ async function main() {
       tokens_to_be_collected.add(reward_info.mint.toBase58());
     }
   });
+
   // トークンアカウントのアドレス取得および存在しない場合の作成命令を取得
   const required_ta_ix: Instruction[] = [];
   const token_account_map = new Map<string, PublicKey>();
@@ -73,7 +74,7 @@ async function main() {
 
   // フィーやリワードの情報を最新化する命令を作成
   let update_fee_and_rewards_ix = WhirlpoolIx.updateFeesAndRewardsIx(
-    ctx.program,
+    ctx.program, 
     {
       whirlpool: position.getData().whirlpool,
       position: position_pubkey,
@@ -119,8 +120,10 @@ async function main() {
 
   // トランザクション組み立て
   const tx_builder = new TransactionBuilder(ctx.connection, ctx.wallet);
+
   // トークンアカウント作成
   required_ta_ix.map((ix) => tx_builder.addInstruction(ix));
+
   // 更新&フィー回収&リワード回収
   tx_builder
     .addInstruction(update_fee_and_rewards_ix)

@@ -51,14 +51,18 @@ async function main() {
     tokenMintB: token_b.mint,
     sqrtPrice: whirlpool_data.sqrtPrice,
     tickCurrentIndex: whirlpool_data.tickCurrentIndex,
+
     // Pass the price range of the position as is
     tickLowerIndex: position.getData().tickLowerIndex,
     tickUpperIndex: position.getData().tickUpperIndex,
+
     // Input token and amount
     inputTokenMint: devUSDC.mint,
     inputTokenAmount: dev_usdc_amount,
+
     // Acceptable slippage
     slippageTolerance: slippage,
+
     // Get token info for TokenExtensions
     tokenExtensionCtx: await TokenExtensionUtil.buildTokenExtensionContext(ctx.fetcher, whirlpool_data),
   });

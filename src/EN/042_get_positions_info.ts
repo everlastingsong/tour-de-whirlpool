@@ -34,12 +34,12 @@ async function main() {
 
     // Returns the address of the Whirlpool position only if the number of tokens is 1 (ignores empty token accounts and non-NFTs)
     return new BN(parsed.amount.toString()).eq(new BN(1)) ? pda.publicKey : undefined;
-  }).filter(pubkey => pubkey !== undefined);
+  }).filter((pubkey) => pubkey !== undefined);
 
   // Get data from Whirlpool position addresses
   const whirlpool_position_candidate_datas = await ctx.fetcher.getPositions(whirlpool_position_candidate_pubkeys, IGNORE_CACHE);
   // Leave only addresses with correct data acquisition as position addresses
-  const whirlpool_positions = whirlpool_position_candidate_pubkeys.filter((pubkey, i) =>
+  const whirlpool_positions = whirlpool_position_candidate_pubkeys.filter((pubkey, i) => 
     whirlpool_position_candidate_datas[i] !== null
   );
 

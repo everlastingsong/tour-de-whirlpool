@@ -45,6 +45,7 @@ async function main() {
 
   // Get data from Whirlpool position addresses
   const whirlpool_position_candidate_datas = await ctx.fetcher.getPositions(whirlpool_position_candidate_pubkeys, IGNORE_CACHE);
+
   // Leave only addresses with correct data acquisition as position addresses
   const whirlpool_positions = whirlpool_position_candidate_pubkeys.filter((pubkey, i) =>
     whirlpool_position_candidate_datas[i] !== null

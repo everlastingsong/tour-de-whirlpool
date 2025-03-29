@@ -16,6 +16,7 @@ async function main() {
   // You can use the Lookup Table Fetcher to find ALTs for V0 transactions
   // The Lookup Table Fetcher provided by Orca is not available on devnet, so set it to undefined
   // On mainnet, you can create a Lookup Table Fetcher with the following code
+  //
   // import { OrcaLookupTableFetcher } from "@orca-so/orca-sdk";
   // import axios from "axios";
   // const server = axios.create({baseURL: "https://api.mainnet.orca.so/v1", responseType: "json"});
