@@ -1,5 +1,3 @@
-# Tour de Whirlpool
-
 ![Tour-de-Whirlpool-image-2-small](https://github.com/user-attachments/assets/e7c80398-5329-4512-97fd-395285e7e0c9)
 
 ## Environment
