@@ -7,7 +7,7 @@ import {
   createTransferCheckedInstruction
 } from "@solana/spl-token";
 import { resolveOrCreateATA, ZERO } from "@orca-so/common-sdk";
-import secret from "../../wallet.json";
+import secret from "../../../wallet.json";
 
 const RPC_ENDPOINT_URL = "https://api.devnet.solana.com";
 const COMMITMENT = 'confirmed';

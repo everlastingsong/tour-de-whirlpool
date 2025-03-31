@@ -1,5 +1,5 @@
 import { Keypair, Connection } from "@solana/web3.js";
-import secret from "../../wallet.json";
+import secret from "../../../wallet.json";
 
 const RPC_ENDPOINT_URL = "https://api.devnet.solana.com";
 const COMMITMENT = 'confirmed';
@@ -15,14 +15,6 @@ async function main() {
   // When displaying the public key, use base58 encoding
   console.log("endpoint:", connection.rpcEndpoint);
   console.log("wallet pubkey:", keypair.publicKey.toBase58());
-
-  // Send the transaction
-  const signature = await connection.requestAirdrop(keypair.publicKey, 1_000_000_000); // 1 SOL
-  console.log("signature:", signature);
-
-  // Wait for the transaction to complete
-  const latest_blockhash = await connection.getLatestBlockhash();
-  await connection.confirmTransaction({signature, ...latest_blockhash});
 
   // Obtain the SOL balance
   // Use the getBalance method from the Connection class

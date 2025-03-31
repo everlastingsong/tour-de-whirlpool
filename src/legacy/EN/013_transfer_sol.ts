@@ -2,7 +2,7 @@ import {
   Keypair, Connection, SystemProgram,
   PublicKey, TransactionMessage, VersionedTransaction
 } from "@solana/web3.js";
-import secret from "../../wallet.json";
+import secret from "../../../wallet.json";
 
 const RPC_ENDPOINT_URL = "https://api.devnet.solana.com";
 const COMMITMENT = 'confirmed';

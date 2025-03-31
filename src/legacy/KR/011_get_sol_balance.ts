@@ -1,28 +1,27 @@
 import { Keypair, Connection } from "@solana/web3.js";
-import secret from "../../wallet.json";
+import secret from "../../../wallet.json";
 
 const RPC_ENDPOINT_URL = "https://api.devnet.solana.com";
 const COMMITMENT = 'confirmed';
 
 async function main() {
-  // Create a connection for sending RPC requests to Devnet
+  // Devnet RPC에 요청을 보내기 위한 커넥션 생성
   const connection = new Connection(RPC_ENDPOINT_URL, COMMITMENT);
 
-  // Read in the private key from wallet.json (The public and private key pair will be managed using the Keypair class)
+  // wallet.json에서 개인키 로딩 (공개키/비밀키 쌍은 Keypair 클래스로 관리됩니다)
   const keypair = Keypair.fromSecretKey(new Uint8Array(secret));
 
-  // Display the RPC and the wallet's public key
-  // When displaying the public key, use base58 encoding
+  // 사용 중인 RPC와 지갑의 공개 키를 출력
+  // 공개 키를 표시할 때는 Base58 형식의 문자열을 사용함
   console.log("endpoint:", connection.rpcEndpoint);
   console.log("wallet pubkey:", keypair.publicKey.toBase58());
 
-  // Obtain the SOL balance
-  // Use the getBalance method from the Connection class
+  // SOL 잔액을 조회
+  // Connection 클래스의 getBalance 함수를 활용
   const sol_balance = await connection.getBalance(keypair.publicKey);
 
-  // Display the SOL balance
-  // Since SOL is internally managed as an integer value and denominated in lamports,
-  // divide by 10^9 to obtain a value denominated in SOL.
+  // SOL 잔액을 로그로 출력
+  // lamports 단위이므로 10^9로 나누어 실제 SOL 단위로 변환 (1 SOL = 10^9 lamports)
   console.log("lamports:", sol_balance);
   console.log("SOL:", sol_balance / 10**9);
 }
