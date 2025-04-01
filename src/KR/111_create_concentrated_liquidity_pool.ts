@@ -21,16 +21,12 @@ import Decimal from "decimal.js";
 // > set ANCHOR_WALLET=wallet.json
 // > ts-node this_script.ts
 
-//LANG:JP Orca が管理している WhirlpoolsConfig のアドレスは以下のページにリストされています
-//LANG:EN These are the addresses of Orca owned WhirlpoolsConfig. For more details, see
-//LANG:KR Orca 가 관리하는 WhirlpoolsConfig 의 주소는 다음 페이지를 참조
+// Orca 가 관리하는 WhirlpoolsConfig 의 주소는 다음 페이지를 참조
 // https://dev.orca.so/Architecture%20Overview/Account%20Architecture
 const DEVNET_WHIRLPOOLS_CONFIG = new PublicKey("FcrweFY1G9HJAHG5inkGB6pKg1HZ6x9UC2WioAfWrGkR");
 
 async function main() {
-  //LANG:JP WhirlpoolClient 作成
-  //LANG:EN Create WhirlpoolClient
-  //LANG:KR WhirlpoolClient 생성
+  // WhirlpoolClient 생성
   const provider = AnchorProvider.env();
   const ctx = WhirlpoolContext.withProvider(provider, ORCA_WHIRLPOOL_PROGRAM_ID);
   const client = buildWhirlpoolClient(ctx);
@@ -38,10 +34,7 @@ async function main() {
   console.log("endpoint:", ctx.connection.rpcEndpoint);
   console.log("wallet pubkey:", ctx.wallet.publicKey.toBase58());
 
-  //LANG:JP 新たなトークンを作成 (トークンは事前に作成されているべきであり、チュートリアル固有の処理です)
-  //LANG:EN Create new token mints. Note that the in a more realistic scenario,
-  //LANG:EN the mints are generated beforehand.
-  //LANG:KR 새로운 토큰을 생성. 이 튜토리얼의 경우, 토큰은 이미 생성되어 있어야 함.
+  // 새로운 토큰을 생성. 이 튜토리얼의 경우, 토큰은 이미 생성되어 있어야 함.
   const walletKeypair = (ctx.wallet as unknown as { payer: Keypair }).payer;
   const newTokenPubkeys = await Promise.all([
     createMint(
@@ -60,17 +53,10 @@ async function main() {
     ),
   ]);
 
-  //LANG:JP 2 つのトークンを辞書順に並べ替え
-  //LANG:JP Whirlpool は 2 つのトークン A/B のペアで構成されますが、順番がトークンのミントアドレスの辞書順と決まっています
-  //LANG:JP 例えば、SOL/USDC のペアは作成できますが、USDC/SOL のペアは作成できません
-  //LANG:EN Token A and Token B Mint has to be cardinally ordered
-  //LANG:EN For example, SOL/USDC can be created, but USDC/SOL cannot be created
-  //LANG:KR 2개의 토큰을 사전순으로 정렬
-  //LANG:KR 예를 들어 SOL/USDC 풀은 생성할 수 있지만, USDC/SOL 풀은 생성할 수 없음
+  // 2개의 토큰을 사전순으로 정렬
+  // 예를 들어 SOL/USDC 풀은 생성할 수 있지만, USDC/SOL 풀은 생성할 수 없음
   const [tokenAddressA, tokenAddressB] = PoolUtil.orderMints(newTokenPubkeys[0], newTokenPubkeys[1]);
 
-  //LANG:JP トークンのミントアカウントを取得
-  //LANG:EN Fetch token mint infos
   const tokenA = await ctx.fetcher.getMintInfo(tokenAddressA);
   const tokenB = await ctx.fetcher.getMintInfo(tokenAddressB);
   const decimalsA = tokenA.decimals;
@@ -78,21 +64,14 @@ async function main() {
   console.log("tokenA:", tokenAddressA.toString(), "decimals:", decimalsA);
   console.log("tokenB:", tokenAddressB.toString(), "decimals:", decimalsB);
 
-  //LANG:JP Concentrated Liquidity Pool の作成では tick_spacing を指定する必要があります
-  //LANG:JP tick_spacing はプールの手数料定義にマッピングされます。詳細は以下を参照してください
-  //LANG:EN The tick spacing maps to the fee tier of the pool. For more details, see
-  //LANG:KR tick_spacing 은 풀의 수수료 계층에 매핑됩니다. 자세한 내용은 다음을 참조
+  // tick_spacing 은 풀의 수수료 계층에 매핑됩니다. 자세한 내용은 다음을 참조
   // https://dev.orca.so/Architecture%20Overview/Whirlpool%20Parameters#initialized-feetiers
   const tickSpacing = 64;
 
-  //LANG:JP プールの初期価格を設定 (価格単位は トークンB/トークンA)
-  //LANG:EN Set the price of token A in terms of token B
-  //LANG:KR 풀의 초기 가격을 설정합니다. 가격 단위는 토큰 B/토큰 A
+  // 풀의 초기 가격을 설정합니다. 가격 단위는 토큰 B/토큰 A
   const initialPrice = new Decimal(0.01);
 
-  //LANG:JP プールを作成
-  //LANG:EN Create a new pool
-  //LANG:KR 새로운 풀을 생성
+  // 새로운 풀을 생성
   const { poolKey, tx: createPoolTxBuilder } = await client.createPool(
     DEVNET_WHIRLPOOLS_CONFIG,
     tokenAddressA,
@@ -103,9 +82,7 @@ async function main() {
   );
   const createPoolTxId = await createPoolTxBuilder.buildAndExecute();
 
-  //LANG:JP 初期化したプールの Whirlpool アカウントを取得
-  //LANG:EN Fetch pool data to verify the initial price and tick
-  //LANG:KR 초기화된 풀의 Whirlpool 계정을 가져옴
+  // 초기화된 풀의 Whirlpool 계정을 가져옴
   const pool = await client.getPool(poolKey);
   const poolData = pool.getData();
   const poolInitialPrice = PriceMath.sqrtPriceX64ToPrice(
@@ -125,14 +102,6 @@ async function main() {
     "\n  initialTick:", poolInitialTick
   );
 
-  //LANG:JP createPool は現在価格を含む TickArray アカウントを初期化します
-  //LANG:JP 流動性プロバイダ向けに、さらに TickArray アカウントを初期化することができます
-  //LANG:JP 以下のコードは、全ての価格帯をカバーする (Full Range) ポジションを作成するために必要な
-  //LANG:JP TickArray アカウントを初期化します
-  //LANG:EN createPool initializes the tick array that houses the current tick.
-  //LANG:EN To accomodate liquidity providers, you can initialize more tick array accounts.
-  //LANG:EN The following code initializes the tick arrays that accomodates opening full range
-  //LANG:EN positions.
   const [lowestInitializableTick, highestInitializableTick] =
     TickUtil.getFullRangeTickIndex(tickSpacing);
   const initTickArraysTxBuilder = await pool.initTickArrayForTicks([
