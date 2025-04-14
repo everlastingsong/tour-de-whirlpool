@@ -66,7 +66,7 @@ async function main() {
   console.log("fee tokenB(devUSDC):", DecimalUtil.adjustDecimals(new Decimal(quote_fee.feeOwedB.toString()), devUSDC.decimals));
 
   // Get rewards
-  const quote_reward = await collectRewardsQuote({
+  const quote_reward = collectRewardsQuote({
     whirlpool: whirlpool.getData(),
     position: position.getData(),
     tickLower: tick_lower,

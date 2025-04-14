@@ -84,7 +84,7 @@ async function main() {
   //LANG:JP リワードの取得
   //LANG:EN Get rewards
   //LANG:KR 리워드 조회
-  const quote_reward = await collectRewardsQuote({
+  const quote_reward = collectRewardsQuote({
     whirlpool: whirlpool.getData(),
     position: position.getData(),
     tickLower: tick_lower,

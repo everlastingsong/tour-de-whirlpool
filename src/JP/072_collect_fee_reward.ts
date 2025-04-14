@@ -58,7 +58,7 @@ async function main() {
 
   // トークンアカウントのアドレス取得および存在しない場合の作成命令を取得
   const required_ta_ix: Instruction[] = [];
-  const token_account_map = new Map<string, PublicKey>();
+  const token_account_map = new Map<string, { token_account: PublicKey; token_program: PublicKey }>();
   for (let mint_b58 of tokens_to_be_collected) {
     const mint = new PublicKey(mint_b58);
     // 存在する場合は ix は EMPTY_INSTRUCTION
@@ -69,11 +69,11 @@ async function main() {
       () => ctx.fetcher.getAccountRentExempt()
     );
     required_ta_ix.push(ix);
-    token_account_map.set(mint_b58, address);
+    token_account_map.set(mint_b58, { token_account: address, token_program: ix.tokenProgram });
   }
 
   // フィーやリワードの情報を最新化する命令を作成
-  let update_fee_and_rewards_ix = WhirlpoolIx.updateFeesAndRewardsIx(
+  const update_fee_and_rewards_ix = WhirlpoolIx.updateFeesAndRewardsIx(
     ctx.program, 
     {
       whirlpool: position.getData().whirlpool,
@@ -84,15 +84,21 @@ async function main() {
   );
 
   // フィー回収の命令を作成
-  let collect_fees_ix = WhirlpoolIx.collectFeesIx(
+  const token_account_a = token_account_map.get(token_a.mint.toBase58());
+  const token_account_b = token_account_map.get(token_b.mint.toBase58());
+  const collect_fees_ix = WhirlpoolIx.collectFeesV2Ix(
     ctx.program,
     {
       whirlpool: whirlpool_pubkey,
       position: position_pubkey,
       positionAuthority: position_owner,
       positionTokenAccount: position_token_account,
-      tokenOwnerAccountA: token_account_map.get(token_a.mint.toBase58()),
-      tokenOwnerAccountB: token_account_map.get(token_b.mint.toBase58()),
+      tokenMintA: whirlpool.getData().tokenMintA,
+      tokenMintB: whirlpool.getData().tokenMintB,
+      tokenOwnerAccountA: token_account_a.token_account,
+      tokenOwnerAccountB: token_account_b.token_account,
+      tokenProgramA: token_account_a.token_program,
+      tokenProgramB: token_account_b.token_program,
       tokenVaultA: whirlpool.getData().tokenVaultA,
       tokenVaultB: whirlpool.getData().tokenVaultB,
     }
@@ -104,7 +110,8 @@ async function main() {
     const reward_info = whirlpool.getData().rewardInfos[i];
     if (!PoolUtil.isRewardInitialized(reward_info)) continue;
 
-    collect_reward_ix[i] = WhirlpoolIx.collectRewardIx(
+    const reward_account = token_account_map.get(reward_info.mint.toBase58());
+    collect_reward_ix[i] = WhirlpoolIx.collectRewardV2Ix(
       ctx.program,
       {
         whirlpool: whirlpool_pubkey,
@@ -112,7 +119,9 @@ async function main() {
         positionAuthority: position_owner,
         positionTokenAccount: position_token_account,
         rewardIndex: i,
-        rewardOwnerAccount: token_account_map.get(reward_info.mint.toBase58()),
+        rewardMint: reward_info.mint,
+        rewardOwnerAccount: reward_account.token_account,
+        rewardTokenProgram: reward_account.token_program,
         rewardVault: reward_info.vault,
       }
     );
