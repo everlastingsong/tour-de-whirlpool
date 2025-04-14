@@ -1,5 +1,5 @@
 import { Keypair, Connection } from "@solana/web3.js";
-import { TOKEN_PROGRAM_ID } from "@solana/spl-token";
+import { TOKEN_2022_PROGRAM_ID, TOKEN_PROGRAM_ID } from "@solana/spl-token";
 import { DecimalUtil } from "@orca-so/common-sdk";
 import { unpackAccount } from "@solana/spl-token";
 import BN from "bn.js";
@@ -17,11 +17,14 @@ async function main() {
 
   // https://everlastingsong.github.io/nebula/
   // devToken specification
-  const token_defs = {
-    "BRjpCHtyQLNCo8gqRUr8jtdAj5AjPYQaoqbvcZiHok1k": {name: "devUSDC", decimals: 6},
-    "H8UekPGwePSmQ3ttuYGPU1szyFfjZR4N53rymSFwpLPm": {name: "devUSDT", decimals: 6},
-    "Jd4M8bfJG3sAkd82RsGWyEXoaBXQP7njFzBwEaCTuDa":  {name: "devSAMO", decimals: 9},
-    "Afn8YB1p4NsoZeS5XJBZ18LTfEy5NFPwN46wapZcBQr6": {name: "devTMAC", decimals: 6},
+  const tokenDefs = {
+    "BRjpCHtyQLNCo8gqRUr8jtdAj5AjPYQaoqbvcZiHok1k": {name: "devUSDC", decimals: 6, program: TOKEN_PROGRAM_ID},
+    "H8UekPGwePSmQ3ttuYGPU1szyFfjZR4N53rymSFwpLPm": {name: "devUSDT", decimals: 6, program: TOKEN_PROGRAM_ID},
+    "Jd4M8bfJG3sAkd82RsGWyEXoaBXQP7njFzBwEaCTuDa":  {name: "devSAMO", decimals: 9, program: TOKEN_PROGRAM_ID},
+    "Afn8YB1p4NsoZeS5XJBZ18LTfEy5NFPwN46wapZcBQr6": {name: "devTMAC", decimals: 6, program: TOKEN_PROGRAM_ID},
+    "Hy5ZLF26P3bjfVtrt4qDQCn6HGhS5izb5SNv7P9qmgcG": {name: "devPYUSD", decimals: 6, program: TOKEN_2022_PROGRAM_ID},
+    "9fcwFnknB7cZrpVYQxoFgt9haYe59G7bZyTYJ4PkYjbS": {name: "devBERN", decimals: 5, program: TOKEN_2022_PROGRAM_ID},
+    "FKUPCock94bCnKqsi7UgqxnpzQ43c6VHEYhuEPXYpoBk": {name: "devSUSD", decimals: 6, program: TOKEN_2022_PROGRAM_ID},
   };
 
   // Obtain the token accounts from the wallet's public key
@@ -40,32 +43,38 @@ async function main() {
     { programId: TOKEN_PROGRAM_ID }
   );
   console.log("getTokenAccountsByOwner:", accounts);
+  const accounts2022 = await connection.getTokenAccountsByOwner(
+    keypair.publicKey,
+    { programId: TOKEN_2022_PROGRAM_ID }
+  );
+  console.log("getTokenAccountsByOwner(2022):", accounts2022);
+  const allAccounts = [...accounts.value, ...accounts2022.value];
 
   // Deserialize token account data
-  for (let i=0; i<accounts.value.length; i++) {
-    const value = accounts.value[i];
+  for (let i=0; i<allAccounts.length; i++) {
+    const value = allAccounts[i];
 
     // Deserialize
-    const parsed_token_account = unpackAccount(value.pubkey, value.account);
+    const parsedTokenAccount = unpackAccount(value.pubkey, value.account, value.account.owner);
 
     // Use the mint address to determine which token account is for which token
-    const mint = parsed_token_account.mint;
-    const token_def = token_defs[mint.toBase58()];
+    const mint = parsedTokenAccount.mint;
+    const tokenDef = tokenDefs[mint.toBase58()];
     // Ignore non-devToken accounts
-    if ( token_def === undefined ) continue;
+    if ( tokenDef === undefined ) continue;
 
     // The balance is "amount"
-    const amount = parsed_token_account.amount;
+    const amount = parsedTokenAccount.amount;
 
     // The balance is managed as an integer value, so it must be converted for UI display
-    const ui_amount = DecimalUtil.fromBN(new BN(amount.toString()), token_def.decimals);
+    const uiAmount = DecimalUtil.fromBN(new BN(amount.toString()), tokenDef.decimals);
 
     console.log(
       "TokenAccount:", value.pubkey.toBase58(),
       "\n  mint:", mint.toBase58(),
-      "\n  name:", token_def.name,
+      "\n  name:", tokenDef.name,
       "\n  amount:", amount.toString(),
-      "\n  ui_amount:", ui_amount.toString()
+      "\n  ui_amount:", uiAmount.toString()
     );
   }
 }

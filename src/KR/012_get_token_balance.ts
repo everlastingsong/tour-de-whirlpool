@@ -1,5 +1,5 @@
 import { Keypair, Connection } from "@solana/web3.js";
-import { TOKEN_PROGRAM_ID } from "@solana/spl-token";
+import { TOKEN_2022_PROGRAM_ID, TOKEN_PROGRAM_ID } from "@solana/spl-token";
 import { DecimalUtil } from "@orca-so/common-sdk";
 import { unpackAccount } from "@solana/spl-token";
 import BN from "bn.js";
@@ -17,11 +17,14 @@ async function main() {
 
   // https://everlastingsong.github.io/nebula/
   // devToken specification
-  const token_defs = {
-    "BRjpCHtyQLNCo8gqRUr8jtdAj5AjPYQaoqbvcZiHok1k": {name: "devUSDC", decimals: 6},
-    "H8UekPGwePSmQ3ttuYGPU1szyFfjZR4N53rymSFwpLPm": {name: "devUSDT", decimals: 6},
-    "Jd4M8bfJG3sAkd82RsGWyEXoaBXQP7njFzBwEaCTuDa":  {name: "devSAMO", decimals: 9},
-    "Afn8YB1p4NsoZeS5XJBZ18LTfEy5NFPwN46wapZcBQr6": {name: "devTMAC", decimals: 6},
+  const tokenDefs = {
+    "BRjpCHtyQLNCo8gqRUr8jtdAj5AjPYQaoqbvcZiHok1k": {name: "devUSDC", decimals: 6, program: TOKEN_PROGRAM_ID},
+    "H8UekPGwePSmQ3ttuYGPU1szyFfjZR4N53rymSFwpLPm": {name: "devUSDT", decimals: 6, program: TOKEN_PROGRAM_ID},
+    "Jd4M8bfJG3sAkd82RsGWyEXoaBXQP7njFzBwEaCTuDa":  {name: "devSAMO", decimals: 9, program: TOKEN_PROGRAM_ID},
+    "Afn8YB1p4NsoZeS5XJBZ18LTfEy5NFPwN46wapZcBQr6": {name: "devTMAC", decimals: 6, program: TOKEN_PROGRAM_ID},
+    "Hy5ZLF26P3bjfVtrt4qDQCn6HGhS5izb5SNv7P9qmgcG": {name: "devPYUSD", decimals: 6, program: TOKEN_2022_PROGRAM_ID},
+    "9fcwFnknB7cZrpVYQxoFgt9haYe59G7bZyTYJ4PkYjbS": {name: "devBERN", decimals: 5, program: TOKEN_2022_PROGRAM_ID},
+    "FKUPCock94bCnKqsi7UgqxnpzQ43c6VHEYhuEPXYpoBk": {name: "devSUSD", decimals: 6, program: TOKEN_2022_PROGRAM_ID},
   };
 
   // 지갑의 공개 키로부터 토큰 계정을 조회
@@ -40,32 +43,38 @@ async function main() {
     { programId: TOKEN_PROGRAM_ID }
   );
   console.log("getTokenAccountsByOwner:", accounts);
+  const accounts2022 = await connection.getTokenAccountsByOwner(
+    keypair.publicKey,
+    { programId: TOKEN_2022_PROGRAM_ID }
+  );
+  console.log("getTokenAccountsByOwner(2022):", accounts2022);
+  const allAccounts = [...accounts.value, ...accounts2022.value];
 
   // 토큰 계정 데이터를 디코딩
-  for (let i=0; i<accounts.value.length; i++) {
-    const value = accounts.value[i];
+  for (let i=0; i<allAccounts.length; i++) {
+    const value = allAccounts[i];
 
     // 디코딩
-    const parsed_token_account = unpackAccount(value.pubkey, value.account);
+    const parsedTokenAccount = unpackAccount(value.pubkey, value.account, value.account.owner);
 
     // mint 주소를 사용해 어떤 토큰 계정인지 식별
-    const mint = parsed_token_account.mint;
-    const token_def = token_defs[mint.toBase58()];
+    const mint = parsedTokenAccount.mint;
+    const tokenDef = tokenDefs[mint.toBase58()];
     // devToken이 아닌 계정은 무시
-    if ( token_def === undefined ) continue;
+    if ( tokenDef === undefined ) continue;
 
     // 잔액을 amount 필드에 저장
-    const amount = parsed_token_account.amount;
+    const amount = parsedTokenAccount.amount;
 
     // 잔액은 정수형으로 관리되므로 UI 표시를 위해 변환이 필요
-    const ui_amount = DecimalUtil.fromBN(new BN(amount.toString()), token_def.decimals);
+    const uiAmount = DecimalUtil.fromBN(new BN(amount.toString()), tokenDef.decimals);
 
     console.log(
       "TokenAccount:", value.pubkey.toBase58(),
       "\n  mint:", mint.toBase58(),
-      "\n  name:", token_def.name,
+      "\n  name:", tokenDef.name,
       "\n  amount:", amount.toString(),
-      "\n  ui_amount:", ui_amount.toString()
+      "\n  ui_amount:", uiAmount.toString()
     );
   }
 }
