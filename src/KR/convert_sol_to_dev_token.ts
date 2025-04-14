@@ -1,5 +1,5 @@
 import { Keypair, Connection, PublicKey, Transaction, TransactionInstruction, SystemProgram } from "@solana/web3.js";
-import { ASSOCIATED_TOKEN_PROGRAM_ID, TOKEN_PROGRAM_ID, getAssociatedTokenAddressSync } from "@solana/spl-token";
+import { ASSOCIATED_TOKEN_PROGRAM_ID, TOKEN_PROGRAM_ID, TOKEN_2022_PROGRAM_ID, getAssociatedTokenAddressSync } from "@solana/spl-token";
 import secret from "../../wallet.json";
 
 const RPC_ENDPOINT_URL = "https://api.devnet.solana.com";
@@ -8,16 +8,20 @@ const COMMITMENT = 'confirmed';
 async function main() {
   // https://everlastingsong.github.io/nebula/
   // devToken specification
-  const token_defs = {
-    "BRjpCHtyQLNCo8gqRUr8jtdAj5AjPYQaoqbvcZiHok1k": {name: "devUSDC", decimals: 6},
-    "H8UekPGwePSmQ3ttuYGPU1szyFfjZR4N53rymSFwpLPm": {name: "devUSDT", decimals: 6},
-    "Jd4M8bfJG3sAkd82RsGWyEXoaBXQP7njFzBwEaCTuDa":  {name: "devSAMO", decimals: 9},
-    "Afn8YB1p4NsoZeS5XJBZ18LTfEy5NFPwN46wapZcBQr6": {name: "devTMAC", decimals: 6},
+  const tokenDefs = {
+    "BRjpCHtyQLNCo8gqRUr8jtdAj5AjPYQaoqbvcZiHok1k": {name: "devUSDC", decimals: 6, program: TOKEN_PROGRAM_ID},
+    "H8UekPGwePSmQ3ttuYGPU1szyFfjZR4N53rymSFwpLPm": {name: "devUSDT", decimals: 6, program: TOKEN_PROGRAM_ID},
+    "Jd4M8bfJG3sAkd82RsGWyEXoaBXQP7njFzBwEaCTuDa":  {name: "devSAMO", decimals: 9, program: TOKEN_PROGRAM_ID},
+    "Afn8YB1p4NsoZeS5XJBZ18LTfEy5NFPwN46wapZcBQr6": {name: "devTMAC", decimals: 6, program: TOKEN_PROGRAM_ID},
+    "Hy5ZLF26P3bjfVtrt4qDQCn6HGhS5izb5SNv7P9qmgcG": {name: "devPYUSD", decimals: 6, program: TOKEN_2022_PROGRAM_ID},
+    "9fcwFnknB7cZrpVYQxoFgt9haYe59G7bZyTYJ4PkYjbS": {name: "devBERN", decimals: 5, program: TOKEN_2022_PROGRAM_ID},
+    "FKUPCock94bCnKqsi7UgqxnpzQ43c6VHEYhuEPXYpoBk": {name: "devSUSD", decimals: 6, program: TOKEN_2022_PROGRAM_ID},
   };
 
   // 토큰 이름을 받아 mint 주소로 변환
   const devTokenName = process.argv[process.argv.length - 1];
-  const devTokenMint = new PublicKey(Object.keys(token_defs).find(key => token_defs[key].name === devTokenName));
+  const devTokenMint = new PublicKey(Object.keys(tokenDefs).find(key => tokenDefs[key].name === devTokenName));
+  const devTokenProgram = tokenDefs[devTokenMint.toBase58()].program;
   // Devnet RPC 연결 생성
   const connection = new Connection(RPC_ENDPOINT_URL, COMMITMENT);
 
@@ -35,8 +39,8 @@ async function main() {
   const PDA = new PublicKey("3pgfe1L6jcq59uy3LZmmeSCk9mwVvHXjn21nSvNr8D6x");
 
   const user = keypair.publicKey;
-  const vault = getAssociatedTokenAddressSync(devTokenMint, PDA, true);
-  const user_vault = getAssociatedTokenAddressSync(devTokenMint, user);
+  const vault = getAssociatedTokenAddressSync(devTokenMint, PDA, true, devTokenProgram);
+  const userVault = getAssociatedTokenAddressSync(devTokenMint, user, true, devTokenProgram);
   const ix = new TransactionInstruction({
     programId: DEVTOKEN_DISTRIBUTOR_PROGRAM_ID,
     keys: [
@@ -44,9 +48,9 @@ async function main() {
       { pubkey: vault, isSigner: false, isWritable: true },
       { pubkey: PDA, isSigner: false, isWritable: false },
       { pubkey: user, isSigner: true, isWritable: true },
-      { pubkey: user_vault, isSigner: false, isWritable: true },
+      { pubkey: userVault, isSigner: false, isWritable: true },
       { pubkey: DEVTOKEN_ADMIN, isSigner: false, isWritable: true },
-      { pubkey: TOKEN_PROGRAM_ID, isSigner: false, isWritable: false },
+      { pubkey: devTokenProgram, isSigner: false, isWritable: false },
       { pubkey: SystemProgram.programId, isSigner: false, isWritable: false },
       { pubkey: ASSOCIATED_TOKEN_PROGRAM_ID, isSigner: false, isWritable: false },
     ],
@@ -62,14 +66,14 @@ async function main() {
   console.log("signature:", signature);
 
   // 트랜잭션 반영까지 대기
-  const latest_blockhash = await connection.getLatestBlockhash();
-  await connection.confirmTransaction({signature, ...latest_blockhash});
+  const latestBlockhash = await connection.getLatestBlockhash();
+  await connection.confirmTransaction({signature, ...latestBlockhash});
 
   // 토큰 잔액 조회 (Connection 클래스의 getTokenAccountBalance 메서드 사용)
-  const dev_token_balance = await connection.getTokenAccountBalance(user_vault);
+  const devTokenBalance = await connection.getTokenAccountBalance(userVault);
 
   // 토큰 잔액 출력
-  console.log(`${devTokenName}:`, dev_token_balance.value.uiAmount);
+  console.log(`${devTokenName}:`, devTokenBalance.value.uiAmount);
 }
 
 main();

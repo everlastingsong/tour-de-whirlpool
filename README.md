@@ -60,46 +60,45 @@ ts-node src/EN/airdrop_sol.ts
 ```
 
 ### devTokens
+| token    | address                                        | decimals | program    | extensions             |
+| -------- | ---------------------------------------------- | -------- | ---------- | ---------------------- |
+| devUSDC  | `BRjpCHtyQLNCo8gqRUr8jtdAj5AjPYQaoqbvcZiHok1k` | 6        | Token      |                        |
+| devUSDT  | `H8UekPGwePSmQ3ttuYGPU1szyFfjZR4N53rymSFwpLPm` | 6        | Token      |                        |
+| devSAMO  | `Jd4M8bfJG3sAkd82RsGWyEXoaBXQP7njFzBwEaCTuDa`  | 9        | Token      |                        |
+| devTMAC  | `Afn8YB1p4NsoZeS5XJBZ18LTfEy5NFPwN46wapZcBQr6` | 6        | Token      |                        |
+| devPYUSD | `Hy5ZLF26P3bjfVtrt4qDQCn6HGhS5izb5SNv7P9qmgcG` | 6        | Token-2022 |                        |
+| devBERN  | `9fcwFnknB7cZrpVYQxoFgt9haYe59G7bZyTYJ4PkYjbS` | 5        | Token-2022 | TransferFee (2.69%)    |
+| devSUSD  | `FKUPCock94bCnKqsi7UgqxnpzQ43c6VHEYhuEPXYpoBk` | 6        | Token-2022 | InterestBearing (3.0%) |
 
-| token   | address                                        | decimals |
-| ------- | ---------------------------------------------- | -------- |
-| devUSDC | `BRjpCHtyQLNCo8gqRUr8jtdAj5AjPYQaoqbvcZiHok1k` | 6        |
-| devUSDT | `H8UekPGwePSmQ3ttuYGPU1szyFfjZR4N53rymSFwpLPm` | 6        |
-| devSAMO | `Jd4M8bfJG3sAkd82RsGWyEXoaBXQP7njFzBwEaCTuDa`  | 9        |
-| devTMAC | `Afn8YB1p4NsoZeS5XJBZ18LTfEy5NFPwN46wapZcBQr6` | 6        |
-
-
-1. devUSDC (15 devUSDC with 0.2 SOL)
-```sh
-ts-node src/EN/convert_sol_to_dev_token.ts devUSDC
-```
-
-2. devUSDT (15 devUSDT with 0.2 SOL)
-```sh
-ts-node src/EN/convert_sol_to_dev_token.ts devUSDT
-```
-
-3. devSAMO (1500 devSAMO with 0.2 SOL)
-```sh
-ts-node src/EN/convert_sol_to_dev_token.ts devSAMO
-```
-
-4. devTMAC (150 devTMAC with 0.2 SOL)
-```sh
-ts-node src/EN/convert_sol_to_dev_token.ts devTMAC
-```
+You can convert 0.1 SOL for each devTokens:
+| token    | output amount | command                                               |
+| -------- | ------------- | ----------------------------------------------------- |
+| devUSDC  | 15            | `ts-node src/EN/convert_sol_to_dev_token.ts devUSDC`  |
+| devUSDT  | 15            | `ts-node src/EN/convert_sol_to_dev_token.ts devUSDT`  |
+| devSAMO  | 1500          | `ts-node src/EN/convert_sol_to_dev_token.ts devSAMO`  |
+| devTMAC  | 150           | `ts-node src/EN/convert_sol_to_dev_token.ts devTMAC`  |
+| devPYUSD | 15            | `ts-node src/EN/convert_sol_to_dev_token.ts devPYUSD` |
+| devBERN  | 3000          | `ts-node src/EN/convert_sol_to_dev_token.ts devBERN`  |
+| devSUSD  | 15            | `ts-node src/EN/convert_sol_to_dev_token.ts devSUSD`  |
 
 ## Whirlpools in devnet
 | program id                                    | whirlpools config                              |
 | --------------------------------------------- | ---------------------------------------------- |
 | `whirLbMiicVdio4qvUfM5KAg6Ct8VwpYzGff3uctyCc` | `FcrweFY1G9HJAHG5inkGB6pKg1HZ6x9UC2WioAfWrGkR` |
 
-| tokenA  | tokenB  | tickSpacing | address                                        |
-| ------- | ------- | ----------- | ---------------------------------------------- |
-| SOL     | devUSDC | 64          | `3KBZiL2g8C7tiJ32hTv5v3KM7aK9htpqTw4cTXz1HvPt` |
-| devUSDC | devUSDT | 1           | `63cMwvN8eoaD39os9bKP8brmA7Xtov9VxahnPufWCSdg` |
-| devSAMO | devUSDC | 64          | `EgxU92G34jw6QDG9RuTX9StFg1PmHuDqkRKAE5kVEiZ4` |
-| devTMAC | devUSDC | 64          | `H3xhLrSEyDFm6jjG42QezbvhSxF5YHW75VdGUnqeEg5y` |
+| tokenA  | tokenB   | tickSpacing    | address                                        |
+| ------- | -------- | -------------- | ---------------------------------------------- |
+| SOL     | devUSDC  | 8              | `2WUgXbAmhquXMLhqqUthztDaVYnG8Mmp57CkXNb5ym9G` |
+| SOL     | devUSDC  | 64             | `3KBZiL2g8C7tiJ32hTv5v3KM7aK9htpqTw4cTXz1HvPt` |
+| SOL     | devUSDC  | 32896 (Splash) | `26WuWhkPBhG5d6kZwHBTruLxLvbSe7C62qH21zpisP9c` |
+| devUSDC | devUSDT  | 1              | `63cMwvN8eoaD39os9bKP8brmA7Xtov9VxahnPufWCSdg` |
+| devSAMO | devUSDC  | 64             | `EgxU92G34jw6QDG9RuTX9StFg1PmHuDqkRKAE5kVEiZ4` |
+| devTMAC | devUSDC  | 64             | `H3xhLrSEyDFm6jjG42QezbvhSxF5YHW75VdGUnqeEg5y` |
+| SOL     | devPYUSD | 32             | `8WLHU9LsezCo3DWdFk33rRPdybJabfZ7cBn9ZroWu11t` |
+| devUSDC | devPYUSD | 1              | `J3J1hfwBCXgqp5vVPyfwkzUmcWRpsh3FdAvDiLEMzzYZ` |
+| devSUSD | devPYUSD | 1              | `EENrwVE3NBeR5VcahPeZC8MietVKbXxnVRomagWdVuZa` |
+| devBERN | devPYUSD | 128            | `DhGmYde8VmvVectHigcxZqAJBfCzARJxRCJsU6mBksdn` |
+| devBERN | devPYUSD | 32896 (Splash) | `EdACSeagirp87pAkGwvHwsVkRwkjZTxd83v2UqgiB9LA` |
 
 ## More resources
 - Documentation: https://dev.orca.so/
